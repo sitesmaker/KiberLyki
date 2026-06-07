@@ -43,10 +43,12 @@ export default function FullScreen() {
                     </video>
                 </div>
             )}
-            <div className="fullscreen__content">
-                <h1>{data?.title}</h1>
-                <p>{data?.content}</p>
-                <Button onClick={submitApplication}>Записаться на турнир</Button>
+            <div className="container">
+                <div className="fullscreen__content">
+                    <h1>{data?.title}</h1>
+                    <p>{data?.content}</p>
+                    <Button onClick={submitApplication}>Записаться на турнир</Button>
+                </div>
             </div>
         </div>
     )

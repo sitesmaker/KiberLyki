@@ -3,8 +3,8 @@ html {
 }
 
 body {
-    background: var(--black);
-    color: var(--white);
+    background: var(--white);
+    color: var(--black);
     font-family: "Nunito", sans-serif;
 }
 
@@ -12,6 +12,7 @@ a {
    font-family: "Roboto", sans-serif; 
 }
 
+/* TODO вынести в отдельный файл для header стили */
 header {
     position: fixed;
     top: 0;
@@ -21,6 +22,7 @@ header {
     height: 5rem;
     background: var(--white);
     color: var(--black);
+    box-shadow: 0 0 10px #000;
 }
 
 header + * {
@@ -62,4 +64,36 @@ a:hover {
     padding-right: 40px;
     margin-left: auto;
     margin-right: auto;
+}
+
+/* TODO вынести в отдельный файл для текста стили */
+h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+
+/* Стили формы вынести в TournamentApplication */
+form {
+    padding: 24px;
+    border-radius: 15px;
+    /* box-shadow: 0 0 10px #000; */
+    border: 2px solid var(--blue);
+    position: relative;
+}
+
+form img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 200px;
+}
+
+input {
+    /* border: 2px solid var(--blue); */
+    background: var(--blue);
+    color: var(--white);
+    border-radius: 10px;
+    padding: 5px 10px;
+    outline: none;
 }

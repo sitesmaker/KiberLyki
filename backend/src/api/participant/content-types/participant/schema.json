@@ -32,9 +32,6 @@
     },
     "email": {
       "type": "email"
-    },
-    "registrationDate": {
-      "type": "date"
     }
   }
 }

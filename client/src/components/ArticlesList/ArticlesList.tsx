@@ -1,14 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import "./ArticlesList.css"
-import Button from '../Button.tsx'
 import Article from '../Article/Article.tsx';
+import Section from '../Section/Section.tsx';
 
 export default function ArticlesList() {
   const { 
-    data, 
-    isLoading, 
-    error,
-    refetch
+    data
   } = useQuery({
     queryKey: ['articles'],
     queryFn: async () => {
@@ -19,17 +16,17 @@ export default function ArticlesList() {
     }
   });
 
-  if (isLoading) return <div>Загрузка статей...</div>;
-  if (error) return <div>Ошибка: {error.message}</div>;
-
   return (
-    <div>
-      <Button onClick={refetch}>Обновить</Button>
-      <div className="articles-list">
-        {data.map(article => (
-          <Article key={article.id} articleData={article}  />
-        ))}
+    <Section>
+      <div className="container">
+        <h2>Новости</h2>
+        <div className="articles-list">
+          {data?.map(article => (
+            <Article key={article.id} articleData={article}  />
+          ))}
+        </div>
       </div>
-    </div>
+    </Section>
+
   );
 }
