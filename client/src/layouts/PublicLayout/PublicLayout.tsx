@@ -1,13 +1,11 @@
 import { Outlet, Link } from 'react-router-dom';
 import './PublicLayotStyles.css';
+import Header from '../../components/Header/Header'
 
 export default function PublicLayout() {
   return (
     <div className="public-layout">
-      <header>
-        <Link to="/">Главная</Link>
-        <Link to="/pricing">Цены</Link>
-      </header>
+      <Header />
       <main>
         <Outlet />
       </main>

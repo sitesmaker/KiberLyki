@@ -1,0 +1,6 @@
+.article {
+    background: var(--white);
+    color: var(--black);
+    padding: 24px;
+    width: calc(100% / 3);
+}

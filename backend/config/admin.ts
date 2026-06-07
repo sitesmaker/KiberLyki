@@ -4,6 +4,7 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
   auth: {
     secret: env('ADMIN_JWT_SECRET'),
   },
+  serveAdminPanel: env.bool('SERVE_ADMIN_PANEL', true),
   apiToken: {
     salt: env('API_TOKEN_SALT'),
   },

@@ -1,10 +1,10 @@
 {
-  "kind": "collectionType",
-  "collectionName": "homes",
+  "kind": "singleType",
+  "collectionName": "first_screens",
   "info": {
-    "singularName": "home",
-    "pluralName": "homes",
-    "displayName": "Home"
+    "singularName": "first-screen",
+    "pluralName": "first-screens",
+    "displayName": "FirstScreen"
   },
   "options": {
     "draftAndPublish": true
@@ -14,7 +14,7 @@
     "title": {
       "type": "string"
     },
-    "description": {
+    "content": {
       "type": "text"
     },
     "media": {
