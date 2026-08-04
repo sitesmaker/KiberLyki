@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "staffs",
+  "info": {
+    "singularName": "staff",
+    "pluralName": "staffs",
+    "displayName": "Staff"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "specialization": {
+      "type": "enumeration",
+      "enum": [
+        "Генеральный директор",
+        "Заместитель директора",
+        "Администратор",
+        "Менеджер",
+        "Маркетолог",
+        "Дизайнер"
+      ]
+    },
+    "description": {
+      "type": "text"
+    },
+    "birthDate": {
+      "type": "date"
+    }
+  }
+}

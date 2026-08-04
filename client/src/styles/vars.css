@@ -1,5 +1,9 @@
 :root {
     --black: #000;
+    --dark: #131313;
+    --gray: #3b3b3b;
     --white: #fff;
     --blue: rgb(81, 162, 255);
+
+    --transition: all ease-in-out .3s;
 }

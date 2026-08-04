@@ -1,6 +1,7 @@
 import { Outlet, Link } from 'react-router-dom';
 import './PublicLayotStyles.css';
 import Header from '../../components/Header/Header'
+import Footer from '../../components/Footer/Footer'
 
 export default function PublicLayout() {
   return (
@@ -9,7 +10,7 @@ export default function PublicLayout() {
       <main>
         <Outlet />
       </main>
-      <footer>Красивый подвал</footer>
+      <Footer />
     </div>
   );
 }
