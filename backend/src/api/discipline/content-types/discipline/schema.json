@@ -1,0 +1,14 @@
+{
+  "kind": "collectionType",
+  "collectionName": "disciplines",
+  "info": { "singularName": "discipline", "pluralName": "disciplines", "displayName": "Discipline" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "name": { "type": "string", "required": true, "unique": true },
+    "slug": { "type": "uid", "targetField": "name", "required": true },
+    "teamSize": { "type": "integer", "required": true, "min": 1, "default": 5 },
+    "icon": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "teams": { "type": "relation", "relation": "oneToMany", "target": "api::team.team", "mappedBy": "discipline" },
+    "tournaments": { "type": "relation", "relation": "oneToMany", "target": "api::tournament.tournament", "mappedBy": "discipline" }
+  }
+}

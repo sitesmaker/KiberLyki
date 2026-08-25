@@ -1,8 +1,16 @@
 // components/Toast/Toast.jsx
 import { useEffect, useState } from 'react';
 import './Toast.css';
+import type { ToastType } from '../../context/toast-context';
 
-const Toast = ({ message, type = 'success', duration = 3000, onClose }) => {
+interface ToastProps {
+  message: string;
+  type?: ToastType;
+  duration?: number;
+  onClose: () => void;
+}
+
+const Toast = ({ message, type = 'success', duration = 3000, onClose }: ToastProps) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {

@@ -1,8 +1,18 @@
 import "./FullScreen.css"
 import Button from '../Button.tsx'
 import { useQuery } from '@tanstack/react-query';
+import { apiFetch, getMediaUrl } from '../../api/client';
+import type { Media, StrapiSingleResponse } from '../../types/api';
+import { useNavigate } from 'react-router-dom';
+
+interface FirstScreenData {
+    title?: string;
+    content?: string;
+    media?: Media | null;
+}
 
 export default function FullScreen() {
+    const navigate = useNavigate();
     const { 
         data,
         isLoading,
@@ -10,22 +20,20 @@ export default function FullScreen() {
     } = useQuery({
         queryKey: ['first-screen'],
         queryFn: async () => {
-            const response = await fetch('http://localhost:1337/api/first-screen?populate=media');
-            if (!response.ok) throw new Error('Ошибка загрузки');
-            const json = await response.json();
+            const json = await apiFetch<StrapiSingleResponse<FirstScreenData>>('/api/first-screen?populate=media');
             return json.data;
         }
     });
 
     function submitApplication() {
-        document.querySelector('#submit')?.scrollIntoView();
+        navigate('/tournaments');
     }
 
     if (isLoading) return <div>Загрузка...</div>;
     if (error) return <div>Ошибка: {error.message}</div>;
 
     const media = data?.media;
-    const mediaUrl = media?.url ? `http://localhost:1337${media.url}` : '';
+    const mediaUrl = getMediaUrl(media?.url);
 
     return(
         <div className="fullscreen">

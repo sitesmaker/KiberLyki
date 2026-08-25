@@ -1,0 +1,15 @@
+{
+  "kind": "collectionType",
+  "collectionName": "player_profiles",
+  "info": { "singularName": "player-profile", "pluralName": "player-profiles", "displayName": "Player profile" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "nickname": { "type": "string", "required": true, "unique": true },
+    "firstName": { "type": "string" },
+    "lastName": { "type": "string" },
+    "bio": { "type": "text" },
+    "country": { "type": "string" },
+    "avatar": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "user": { "type": "relation", "relation": "oneToOne", "target": "plugin::users-permissions.user" }
+  }
+}

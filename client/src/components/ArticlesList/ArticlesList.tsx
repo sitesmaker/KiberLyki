@@ -3,10 +3,18 @@ import { useRef, useEffect, useCallback } from 'react';
 import "./ArticlesList.css";
 import Article from '../Article/Article.tsx';
 import Section from '../Section/Section.tsx';
+import { apiFetch } from '../../api/client';
+import type { ArticleData, StrapiListResponse } from '../../types/api';
+
+interface ArticlePage {
+  data: ArticleData[];
+  meta: StrapiListResponse<ArticleData>['meta'];
+  nextPage?: number;
+}
 
 export default function ArticlesList() {
-  const observerRef = useRef(null);
-  const loadMoreRef = useRef(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   // Используем useInfiniteQuery вместо useQuery
   const {
@@ -19,19 +27,14 @@ export default function ArticlesList() {
     error,
   } = useInfiniteQuery({
     queryKey: ['articles'],
-    queryFn: async ({ pageParam = 1 }) => {
-      const response = await fetch(
-        `http://localhost:1337/api/articles?` + new URLSearchParams({
-          'pagination[page]': pageParam,
-          'pagination[pageSize]': 6,
+    queryFn: async ({ pageParam }): Promise<ArticlePage> => {
+      const query = new URLSearchParams({
+          'pagination[page]': String(pageParam),
+          'pagination[pageSize]': '6',
           'populate': 'cover',
           'sort[0]': 'createdAt:desc',
-        })
-      );
-      
-      if (!response.ok) throw new Error('Ошибка загрузки');
-      
-      const json = await response.json();
+        });
+      const json = await apiFetch<StrapiListResponse<ArticleData>>(`/api/articles?${query}`);
       return {
         data: json.data,
         meta: json.meta,
@@ -45,7 +48,7 @@ export default function ArticlesList() {
 
   // Callback для Intersection Observer
   const handleObserver = useCallback(
-    (entries) => {
+    (entries: IntersectionObserverEntry[]) => {
       const target = entries[0];
       if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
         fetchNextPage();
@@ -112,7 +115,7 @@ export default function ArticlesList() {
         <h2>Новости</h2>
         <div className="articles-list">
           {allArticles.map((article, index) => (
-            <Article 
+            <Article
               key={article.id} 
               articleData={article}
               // Добавляем анимацию появления для каждой карточки

@@ -1,0 +1,14 @@
+{
+  "kind": "collectionType",
+  "collectionName": "team_memberships",
+  "info": { "singularName": "team-membership", "pluralName": "team-memberships", "displayName": "Team membership" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "status": { "type": "enumeration", "enum": ["invited", "active", "left", "removed"], "required": true, "default": "active" },
+    "position": { "type": "enumeration", "enum": ["main", "substitute", "coach"], "required": true, "default": "main" },
+    "joinedAt": { "type": "datetime" },
+    "leftAt": { "type": "datetime" },
+    "team": { "type": "relation", "relation": "manyToOne", "target": "api::team.team", "inversedBy": "memberships" },
+    "player": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" }
+  }
+}

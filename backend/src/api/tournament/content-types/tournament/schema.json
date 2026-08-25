@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tournaments",
+  "info": { "singularName": "tournament", "pluralName": "tournaments", "displayName": "Tournament" },
+  "options": { "draftAndPublish": true },
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "slug": { "type": "uid", "targetField": "title", "required": true },
+    "description": { "type": "richtext" },
+    "rules": { "type": "richtext" },
+    "cover": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "format": { "type": "enumeration", "enum": ["single_elimination"], "required": true, "default": "single_elimination" },
+    "teamSize": { "type": "integer", "required": true, "min": 1, "default": 5 },
+    "maxTeams": { "type": "integer", "required": true, "min": 2, "default": 8 },
+    "registrationStartsAt": { "type": "datetime", "required": true },
+    "registrationEndsAt": { "type": "datetime", "required": true },
+    "startsAt": { "type": "datetime", "required": true },
+    "status": { "type": "enumeration", "enum": ["draft", "registration", "check_in", "active", "finished", "cancelled"], "required": true, "default": "draft" },
+    "discipline": { "type": "relation", "relation": "manyToOne", "target": "api::discipline.discipline", "inversedBy": "tournaments" },
+    "registrations": { "type": "relation", "relation": "oneToMany", "target": "api::tournament-registration.tournament-registration", "mappedBy": "tournament" },
+    "matches": { "type": "relation", "relation": "oneToMany", "target": "api::match.match", "mappedBy": "tournament" }
+  }
+}

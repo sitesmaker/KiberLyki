@@ -1,0 +1,12 @@
+{
+  "kind": "collectionType",
+  "collectionName": "registration_players",
+  "info": { "singularName": "registration-player", "pluralName": "registration-players", "displayName": "Registration player" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "nicknameSnapshot": { "type": "string", "required": true },
+    "position": { "type": "enumeration", "enum": ["main", "substitute", "coach"], "required": true },
+    "registration": { "type": "relation", "relation": "manyToOne", "target": "api::tournament-registration.tournament-registration", "inversedBy": "players" },
+    "player": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" }
+  }
+}

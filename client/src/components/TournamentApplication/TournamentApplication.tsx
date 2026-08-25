@@ -1,17 +1,25 @@
 // TournamentApplication.jsx
-import { useState } from 'react';
-import { useToast } from '../../context/ToastContext';
+import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useToast } from '../../context/useToast';
 import Section from "../Section/Section";
 import Button from "../Button";
 import ursaImg from "../../assets/ursa.png";
 import kripImg from "../../assets/krip.png";
 import './TournamentApplication.css';
 
-const STRAPI_URL = 'http://localhost:1337';
+import { apiFetch } from '../../api/client';
+
+interface ApplicationFormData {
+  firstName: string;
+  lastName: string;
+  nickname: string;
+  email: string;
+  photo: File | null;
+}
 
 export default function TournamentApplication() {
   const { showToast } = useToast();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ApplicationFormData>({
     firstName: '',
     lastName: '',
     nickname: '',
@@ -19,8 +27,9 @@ export default function TournamentApplication() {
     photo: null,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -28,8 +37,8 @@ export default function TournamentApplication() {
     }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         showToast('Файл слишком большой (макс. 5MB)', 'error');
@@ -51,7 +60,7 @@ export default function TournamentApplication() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -63,18 +72,11 @@ export default function TournamentApplication() {
         const uploadFormData = new FormData();
         uploadFormData.append('files', formData.photo);
 
-        const uploadResponse = await fetch(`${STRAPI_URL}/api/upload`, {
+        const uploadResult = await apiFetch<Array<{ id: number }>>('/api/upload', {
           method: 'POST',
           body: uploadFormData,
         });
-
-        if (!uploadResponse.ok) {
-          const errorText = await uploadResponse.text();
-          throw new Error(`Ошибка загрузки фото: ${uploadResponse.status}`);
-        }
-
-        const uploadResult = await uploadResponse.json();
-        photoId = Array.isArray(uploadResult) ? uploadResult[0]?.id : uploadResult.id;
+        photoId = uploadResult[0]?.id ?? null;
       }
 
       // Создание записи
@@ -88,18 +90,10 @@ export default function TournamentApplication() {
         }
       };
 
-      const response = await fetch(`${STRAPI_URL}/api/participants`, {
+      await apiFetch('/api/participants', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(participantData),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Ошибка отправки');
-      }
 
       // Успех!
       showToast('Вы успешно записались на турнир! 🎮', 'success');
@@ -113,12 +107,11 @@ export default function TournamentApplication() {
         photo: null,
       });
       
-      const fileInput = document.querySelector('input[type="file"]');
-      if (fileInput) fileInput.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = '';
 
     } catch (error) {
       console.error('Ошибка:', error);
-      showToast(`Ошибка: ${error.message}`, 'error');
+      showToast(`Ошибка: ${error instanceof Error ? error.message : 'неизвестная ошибка'}`, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -131,9 +124,10 @@ export default function TournamentApplication() {
           Не будь крипом, запишись на турнир!
         </h2>
         
-        <form className="tourney-app-form" onSubmit={handleSubmit}>
+        <form id="tournament-application" className="tourney-app-form" onSubmit={handleSubmit}>
           <div className="tourney-app-form__content">
             <input 
+              ref={fileInputRef}
               type="text" 
               name="firstName" 
               placeholder="Имя"

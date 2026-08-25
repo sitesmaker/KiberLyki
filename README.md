@@ -1,0 +1,71 @@
+# Cyberluki
+
+Учебный full-stack проект на React 19 и Strapi 5: новости, киберспортивные команды, регистрация на турниры и single-elimination сетки.
+
+## Запуск
+
+Backend:
+
+```powershell
+cd backend
+npm install
+npm run dev
+```
+
+Frontend во втором терминале:
+
+```powershell
+cd client
+npm install
+Copy-Item .env.example .env
+npm run dev
+```
+
+React-приложение использует `VITE_API_URL`; если `.env` отсутствует, адресом Strapi считается `http://localhost:1337`.
+
+## Основные сущности
+
+- `User` — аккаунт Users & Permissions, логин и пароль.
+- `Player profile` — никнейм и игровые данные.
+- `Team` — команда, дисциплина и текущий капитан.
+- `Team membership` — участие пользователя в команде и позиция.
+- `Captain transfer` — история передачи капитанства.
+- `Tournament` — турнир и сроки регистрации.
+- `Tournament registration` — заявка команды.
+- `Registration player` — снимок состава на момент заявки.
+- `Match` — матч single-elimination сетки.
+
+## Первый запуск Strapi
+
+1. Откройте `http://localhost:1337/admin`.
+2. Создайте дисциплины, например Dota 2 (`teamSize: 5`) и CS2 (`teamSize: 5`).
+3. Создайте и опубликуйте Tournament. Чтобы капитаны могли записаться, задайте его бизнес-статус `registration` и актуальные даты регистрации.
+4. Для организатора создайте end-user в Content Manager → User и назначьте ему роль `Organizer`. Это не администратор панели Strapi, а пользователь React-приложения.
+
+## Потоки приложения
+
+Капитан регистрируется на `/login`, создаёт команду в `/cabinet`, затем создаёт игроков с временными паролями. Передача капитанства разрешена только активному игроку этой же команды и выполняется транзакцией на backend.
+
+На странице турнира капитан выбирает основной состав. Backend проверяет дисциплину, размер состава, сроки, лимит и отсутствие повторной заявки. Организатор принимает заявки, генерирует сетку и записывает результаты; победитель автоматически переходит в следующий матч.
+
+## Проверки
+
+```powershell
+cd client
+npm run lint
+npm run build
+
+cd ../backend
+npm test
+npm run build
+```
+
+Тесты backend проверяют расчёт размера сетки, порядок посева и распределение `bye`.
+
+## React после Vue
+
+- `useState` примерно соответствует локальному `ref`.
+- TanStack Query хранит серверные данные и заменяет ручные `onMounted + fetch`.
+- `AuthProvider` похож на provide/inject для сессии.
+- `useMutation` выполняет изменение на сервере, после чего `invalidateQueries` просит React Query обновить связанные данные.
+- `ProtectedRoute` — route guard для личного кабинета.

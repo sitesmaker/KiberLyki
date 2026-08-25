@@ -1,17 +1,16 @@
 import "./Employee.css";
+import { getMediaUrl } from '../../api/client';
+import type { StaffData } from '../../types/api';
 
-export default function Employee({ data }) {
-    // Получаем URL фото
-    const photoUrl = data.photo?.url 
-        ? `http://localhost:1337${data.photo.url}` 
-        : '';
+export default function Employee({ data }: { data: StaffData }) {
+    const photoUrl = getMediaUrl(data.photo?.url);
 
     return(
         <div className="employee">
             {photoUrl && (
                 <img 
                     src={photoUrl} 
-                    alt={data.name || 'Фото сотрудника'}
+                    alt={`Фото: ${data.firstName} ${data.lastName}`}
                     style={{ width: 100, height: 100, objectFit: 'cover' }}
                 />
             )}

@@ -1,0 +1,12 @@
+{
+  "kind": "collectionType",
+  "collectionName": "captain_transfers",
+  "info": { "singularName": "captain-transfer", "pluralName": "captain-transfers", "displayName": "Captain transfer" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "transferredAt": { "type": "datetime", "required": true },
+    "team": { "type": "relation", "relation": "manyToOne", "target": "api::team.team" },
+    "previousCaptain": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" },
+    "nextCaptain": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" }
+  }
+}

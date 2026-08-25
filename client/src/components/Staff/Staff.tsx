@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import Section from '../Section/Section.tsx';
 import Employee from "../Employee/Employee.tsx";
+import { apiFetch } from '../../api/client';
+import type { StaffData, StrapiListResponse } from '../../types/api';
 
 export default function Staff() {
     const {
@@ -10,9 +12,7 @@ export default function Staff() {
     } = useQuery({
         queryKey: ['staff'],
         queryFn: async () => {
-            const response = await fetch('http://localhost:1337/api/staffs?populate=photo');
-            if (!response.ok) throw new Error('Ошибка загрузки');
-            const json = await response.json();
+            const json = await apiFetch<StrapiListResponse<StaffData>>('/api/staffs?populate=photo');
             return json.data; // Это массив сотрудников
         }
     });

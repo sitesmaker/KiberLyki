@@ -17,6 +17,16 @@
     "description": {
       "type": "text"
     },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "content": {
+      "type": "richtext"
+    },
+    "author": {
+      "type": "string"
+    },
     "gallery": {
       "type": "media",
       "multiple": true,

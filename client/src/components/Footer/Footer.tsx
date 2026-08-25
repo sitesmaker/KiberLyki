@@ -17,12 +17,10 @@ export default function Footer() {
                     <div className="footer__item-title">Навигация</div>
                     <nav>
                         <Link to="/">Главная</Link>
-                        <Link to="/about">О нас</Link>
-                        <Link to="/gallery">Галерея</Link>
                         <Link to="/articles">Новости</Link>
                         <Link to="/teams">Команды</Link>
-                        <Link to="/callback">Записаться</Link>
-                        <Link to="/contacts">Контакты</Link>
+                        <Link to="/tournaments">Турниры</Link>
+                        <Link to="/cabinet">Кабинет</Link>
                     </nav>
                 </div>
                 <div className="footer__item">

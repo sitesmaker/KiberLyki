@@ -1,6 +1,14 @@
 import "./About.css"
 import Section from '../Section/Section.tsx';
 import { useQuery } from '@tanstack/react-query';
+import { apiFetch, getMediaUrl } from '../../api/client';
+import type { Media, StrapiSingleResponse } from '../../types/api';
+
+interface AboutData {
+    title?: string;
+    description?: string;
+    image?: Media | null;
+}
 
 export default function About() {
     const {
@@ -10,9 +18,7 @@ export default function About() {
     } = useQuery({
         queryKey: ['about'],
         queryFn: async () => {
-            const response = await fetch('http://localhost:1337/api/about?populate=image');
-            if (!response.ok) throw new Error('Ошибка загрузки');
-            const json = await response.json();
+            const json = await apiFetch<StrapiSingleResponse<AboutData>>('/api/about?populate=image');
             return json.data;
         }
     });
@@ -21,7 +27,7 @@ export default function About() {
     if (error) return <div>Ошибка: {error.message}</div>;
 
     const image = data?.image;
-    const imageUrl = image?.url ? `http://localhost:1337${image.url}` : '';
+    const imageUrl = getMediaUrl(image?.url);
 
     return(
         <Section className="container about">

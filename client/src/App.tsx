@@ -6,22 +6,35 @@ import Home from './pages/Home.tsx';
 import Teams from './pages/Teams.tsx';
 import Login from './pages/Login.tsx';
 import Articles from './pages/Articles.tsx';
+import ArticleDetails from './pages/ArticleDetails.tsx';
+import Tournaments from './pages/Tournaments.tsx';
+import TournamentDetails from './pages/TournamentDetails.tsx';
+import Cabinet from './pages/Cabinet.tsx';
+import ProtectedRoute from './routes/ProtectedRoute.tsx';
+import { AuthProvider } from './context/AuthProvider.tsx';
 
 export default function App() {
   return (
-    <ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/articles" element={<Articles />} />
+          <Route path="/articles/:identifier" element={<ArticleDetails />} />
+          <Route path="/tournaments" element={<Tournaments />} />
+          <Route path="/tournaments/:documentId" element={<TournamentDetails />} />
         </Route>
-        
-        <Route path="/admin" element={<AdminLayout />}>
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/cabinet" element={<Cabinet />} />
+          <Route path="/admin" element={<AdminLayout />} />
         </Route>
         
         <Route path="/login" element={<Login />} />
       </Routes>
-    </ToastProvider>
+      </ToastProvider>
+    </AuthProvider>
   );
 }

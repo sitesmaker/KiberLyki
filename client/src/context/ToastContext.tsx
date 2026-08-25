@@ -1,27 +1,24 @@
-// context/ToastContext.jsx
-import React, { createContext, useContext, useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import Toast from '../components/Toast/Toast';
 import '../components/Toast/Toast.css';
+import { ToastContext, type ToastType } from './toast-context';
 
-const ToastContext = createContext();
+interface ToastItem {
+  id: number;
+  message: string;
+  type: ToastType;
+  duration: number;
+}
 
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within ToastProvider');
-  }
-  return context;
-};
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-export const ToastProvider = ({ children }) => {
-  const [toasts, setToasts] = useState([]);
-
-  const showToast = (message, type = 'success', duration = 3000) => {
+  const showToast = (message: string, type: ToastType = 'success', duration = 3000) => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message, type, duration }]);
   };
 
-  const removeToast = (id) => {
+  const removeToast = (id: number) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
@@ -41,4 +38,4 @@ export const ToastProvider = ({ children }) => {
       </div>
     </ToastContext.Provider>
   );
-};
+}

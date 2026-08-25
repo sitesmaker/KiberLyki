@@ -1,11 +1,13 @@
-function Button(props) {
+import type { ComponentPropsWithoutRef } from 'react';
+
+type ButtonProps = ComponentPropsWithoutRef<'button'>;
+
+function Button({ className = '', ...props }: ButtonProps) {
     return(
         <button
-            onClick={props.onClick}
-            className="cursor-pointer mt-2 px-4 py-3 rounded-lg bg-blue-400 text-white font-bold"
-        >
-            {props.children}
-        </button>
+            {...props}
+            className={`cursor-pointer mt-2 px-4 py-3 rounded-lg bg-blue-400 text-white font-bold disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+        />
     )
 }
 
