@@ -23,3 +23,10 @@ export function registerRequest(username: string, email: string, password: strin
 export function getCurrentUser() {
   return apiFetch<User>('/api/users/me?populate=role');
 }
+
+export function changePassword(currentPassword: string, password: string, passwordConfirmation: string) {
+  return apiFetch('/api/auth/change-password', {
+    method: 'POST',
+    body: JSON.stringify({ currentPassword, password, passwordConfirmation }),
+  });
+}

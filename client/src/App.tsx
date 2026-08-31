@@ -12,6 +12,7 @@ import TournamentDetails from './pages/TournamentDetails.tsx';
 import Cabinet from './pages/Cabinet.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import { AuthProvider } from './context/AuthProvider.tsx';
+import PlayerProfilePage from './pages/PlayerProfile.tsx';
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/cabinet" element={<Cabinet />} />
+          <Route path="/cabinet/profile" element={<PlayerProfilePage />} />
           <Route path="/admin" element={<AdminLayout />} />
         </Route>
         

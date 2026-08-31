@@ -42,8 +42,10 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
 
   async createMine(ctx) {
     const userId = ctx.state.user.id;
-    const { name, description, discipline } = ctx.request.body?.data ?? {};
-    if (!name?.trim() || !discipline) throw new BadRequestError('Укажите название и дисциплину');
+    const { name, description, disciplines } = ctx.request.body?.data ?? {};
+    if (!name?.trim() || !Array.isArray(disciplines) || disciplines.length === 0) {
+      throw new BadRequestError('Укажите название и хотя бы одну дисциплину');
+    }
 
     const existing = await strapi.db.query('api::team.team').findOne({
       where: { captain: userId, isActive: true },
@@ -56,7 +58,7 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
           name: name.trim(),
           slug: createSlug(name),
           description: description?.trim() || null,
-          discipline,
+          discipline: disciplines,
           captain: userId,
           isActive: true,
         },
@@ -82,7 +84,7 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
     const userId = ctx.state.user.id;
     const { documentId } = ctx.params;
     await findCaptainTeam(strapi, documentId, userId);
-    const { name, description, discipline, logo } = ctx.request.body?.data ?? {};
+    const { name, description, disciplines, logo } = ctx.request.body?.data ?? {};
 
     const data: Record<string, unknown> = {};
     if (typeof name === 'string' && name.trim()) {
@@ -90,7 +92,10 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
       data.slug = createSlug(name);
     }
     if (typeof description === 'string' || description === null) data.description = description;
-    if (discipline) data.discipline = discipline;
+    if (Array.isArray(disciplines)) {
+      if (disciplines.length === 0) throw new BadRequestError('У команды должна остаться хотя бы одна дисциплина');
+      data.discipline = disciplines;
+    }
     if (logo !== undefined) data.logo = logo;
 
     const team = await strapi.documents('api::team.team').update({ documentId, data });
@@ -145,6 +150,79 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
 
     ctx.status = 201;
     return ctx.send({ data: result });
+  },
+
+  async addExistingPlayer(ctx) {
+    const captainId = ctx.state.user.id;
+    const { documentId } = ctx.params;
+    const team = await findCaptainTeam(strapi, documentId, captainId);
+    const { identifier, position = 'main' } = ctx.request.body?.data ?? {};
+
+    if (!identifier?.trim()) throw new BadRequestError('Укажите username или email игрока');
+    if (!['main', 'substitute', 'coach'].includes(position)) throw new BadRequestError('Некорректная позиция игрока');
+
+    const normalizedIdentifier = identifier.trim();
+    const player = await strapi.db.query('plugin::users-permissions.user').findOne({
+      where: {
+        $or: [
+          { username: normalizedIdentifier },
+          { email: normalizedIdentifier.toLowerCase() },
+        ],
+      },
+    });
+    if (!player || player.blocked) throw new NotFoundError('Активный пользователь с таким username или email не найден');
+
+    const activeMembership = await strapi.db.query('api::team-membership.team-membership').findOne({
+      where: { player: player.id, status: 'active' },
+      populate: ['team'],
+    });
+    if (activeMembership?.team?.id === team.id) throw new BadRequestError('Игрок уже находится в составе этой команды');
+    if (activeMembership) throw new BadRequestError('Игрок уже состоит в другой активной команде');
+
+    const previousMembership = await strapi.db.query('api::team-membership.team-membership').findOne({
+      where: { team: team.id, player: player.id, status: { $in: ['left', 'removed'] } },
+    });
+
+    const membership = previousMembership
+      ? await strapi.documents('api::team-membership.team-membership').update({
+          documentId: previousMembership.documentId,
+          data: { status: 'active', position, joinedAt: new Date().toISOString(), leftAt: null },
+        })
+      : await strapi.documents('api::team-membership.team-membership').create({
+          data: {
+            team: team.documentId,
+            player: player.id,
+            status: 'active',
+            position,
+            joinedAt: new Date().toISOString(),
+          },
+        });
+
+    ctx.status = 201;
+    return ctx.send({ data: { membership, player: { id: player.id, username: player.username } } });
+  },
+
+  async removePlayer(ctx) {
+    const captainId = ctx.state.user.id;
+    const { documentId, membershipId } = ctx.params;
+    const team = await findCaptainTeam(strapi, documentId, captainId);
+    const membership = await strapi.documents('api::team-membership.team-membership').findOne({
+      documentId: membershipId,
+      populate: ['team', 'player'],
+    });
+
+    if (!membership || membership.team?.id !== team.id || membership.status !== 'active') {
+      throw new NotFoundError('Активный игрок не найден в составе команды');
+    }
+    if (membership.player?.id === captainId) {
+      throw new BadRequestError('Капитана нельзя удалить. Сначала передайте права другому игроку');
+    }
+
+    const updated = await strapi.documents('api::team-membership.team-membership').update({
+      documentId: membership.documentId,
+      data: { status: 'removed', leftAt: new Date().toISOString() },
+    });
+    return ctx.send({ data: updated });
   },
 
   async transferCaptain(ctx) {

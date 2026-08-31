@@ -16,6 +16,19 @@ export interface User {
   role?: UserRole;
 }
 
+export interface PlayerProfile {
+  id: number;
+  documentId: string;
+  nickname: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  bio?: string | null;
+  country?: string | null;
+  avatar?: Media | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface Discipline {
   id: number;
   documentId: string;
@@ -44,7 +57,7 @@ export interface Team {
   description?: string | null;
   logo?: Media | null;
   isActive: boolean;
-  discipline: Discipline;
+  discipline: Discipline[];
   captain: User;
   memberships: TeamMembership[];
 }

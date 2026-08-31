@@ -8,7 +8,7 @@
     "slug": { "type": "uid", "targetField": "name", "required": true },
     "teamSize": { "type": "integer", "required": true, "min": 1, "default": 5 },
     "icon": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
-    "teams": { "type": "relation", "relation": "oneToMany", "target": "api::team.team", "mappedBy": "discipline" },
+    "teams": { "type": "relation", "relation": "manyToMany", "target": "api::team.team", "mappedBy": "discipline" },
     "tournaments": { "type": "relation", "relation": "oneToMany", "target": "api::tournament.tournament", "mappedBy": "discipline" }
   }
 }

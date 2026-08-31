@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button';
-import { addPlayer, createTeam, getDisciplines, getMyTeam, transferCaptain } from '../api/teams';
+import { addExistingPlayer, addPlayer, createTeam, getDisciplines, getMyTeam, removePlayer, transferCaptain, updateTeam } from '../api/teams';
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { getMyRegistrations, withdrawRegistration } from '../api/tournaments';
@@ -23,9 +23,21 @@ export default function Cabinet() {
     mutationFn: ({ teamId, data }: { teamId: string; data: Parameters<typeof addPlayer>[1] }) => addPlayer(teamId, data),
     onSuccess: () => { refreshTeam(); showToast('Игрок создан и добавлен в команду'); },
   });
+  const existingPlayerMutation = useMutation({
+    mutationFn: ({ teamId, data }: { teamId: string; data: Parameters<typeof addExistingPlayer>[1] }) => addExistingPlayer(teamId, data),
+    onSuccess: () => { refreshTeam(); showToast('Зарегистрированный игрок добавлен в команду'); },
+  });
+  const removePlayerMutation = useMutation({
+    mutationFn: ({ teamId, membershipId }: { teamId: string; membershipId: string }) => removePlayer(teamId, membershipId),
+    onSuccess: () => { refreshTeam(); showToast('Игрок удалён из состава', 'info'); },
+  });
   const transferMutation = useMutation({
     mutationFn: ({ teamId, playerId }: { teamId: string; playerId: number }) => transferCaptain(teamId, playerId),
     onSuccess: () => { refreshTeam(); showToast('Права капитана переданы'); },
+  });
+  const updateTeamMutation = useMutation({
+    mutationFn: ({ teamId, disciplines }: { teamId: string; disciplines: string[] }) => updateTeam(teamId, { disciplines }),
+    onSuccess: () => { refreshTeam(); showToast('Дисциплины команды обновлены'); },
   });
   const withdrawMutation = useMutation({
     mutationFn: withdrawRegistration,
@@ -38,8 +50,16 @@ export default function Cabinet() {
     createMutation.mutate({
       name: String(form.get('name')),
       description: String(form.get('description')),
-      discipline: String(form.get('discipline')),
+      disciplines: form.getAll('disciplines').map(String),
     });
+  }
+
+  function submitDisciplines(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const team = teamQuery.data?.data;
+    if (!team) return;
+    const form = new FormData(event.currentTarget);
+    updateTeamMutation.mutate({ teamId: team.documentId, disciplines: form.getAll('disciplines').map(String) });
   }
 
   function submitPlayer(event: FormEvent<HTMLFormElement>) {
@@ -60,6 +80,23 @@ export default function Cabinet() {
     event.currentTarget.reset();
   }
 
+  function submitExistingPlayer(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const team = teamQuery.data?.data;
+    if (!team) return;
+    const form = new FormData(event.currentTarget);
+    existingPlayerMutation.mutate({
+      teamId: team.documentId,
+      data: { identifier: String(form.get('identifier')), position: String(form.get('position')) },
+    });
+    event.currentTarget.reset();
+  }
+
+  function handleRemovePlayer(membershipId: string, username: string) {
+    if (!team || !window.confirm(`Удалить игрока ${username} из состава? История его заявок сохранится.`)) return;
+    removePlayerMutation.mutate({ teamId: team.documentId, membershipId });
+  }
+
   if (teamQuery.isLoading) return <div className="page-message">Загрузка кабинета...</div>;
   const team = teamQuery.data?.data;
   const isCaptain = teamQuery.data?.meta.isCaptain ?? false;
@@ -68,14 +105,14 @@ export default function Cabinet() {
     <main className="dashboard container">
       <header className="dashboard__header">
         <div><Link to="/">← На сайт</Link><h1>Личный кабинет</h1><p>{user?.username} · {user?.email}</p></div>
-        <Button type="button" onClick={logout}>Выйти</Button>
+        <div className="dashboard__actions"><Link className="button-link" to="/cabinet/profile">Мой профиль</Link><Button type="button" onClick={logout}>Выйти</Button></div>
       </header>
 
       {!team ? (
         <form className="panel form-grid" onSubmit={submitTeam}>
           <h2>Создать команду</h2>
           <label>Название<input name="name" required /></label>
-          <label>Дисциплина<select name="discipline" required defaultValue=""><option value="" disabled>Выберите дисциплину</option>{disciplinesQuery.data?.data.map((item) => <option key={item.documentId} value={item.documentId}>{item.name}</option>)}</select></label>
+          <fieldset className="discipline-picker form-grid__wide"><legend>Дисциплины</legend>{disciplinesQuery.data?.data.map((item) => <label key={item.documentId}><input type="checkbox" name="disciplines" value={item.documentId} /> {item.name} <small>Состав: {item.teamSize}</small></label>)}</fieldset>
           <label className="form-grid__wide">Описание<textarea name="description" rows={4} /></label>
           {createMutation.error && <p className="form-error">{createMutation.error.message}</p>}
           <Button type="submit" disabled={createMutation.isPending}>Создать команду</Button>
@@ -83,7 +120,7 @@ export default function Cabinet() {
       ) : (
         <>
           <section className="panel team-summary">
-            <div><span className="tag">{team.discipline?.name}</span><h2>{team.name}</h2><p>{team.description || 'Описание пока не добавлено'}</p></div>
+            <div><div className="tags">{team.discipline?.map((item) => <span className="tag" key={item.documentId}>{item.name}</span>)}</div><h2>{team.name}</h2><p>{team.description || 'Описание пока не добавлено'}</p></div>
             <div><strong>{isCaptain ? 'Вы капитан' : 'Вы игрок'}</strong><p>Состав: {team.memberships?.filter((item) => item.status === 'active').length ?? 0}</p></div>
           </section>
 
@@ -94,7 +131,10 @@ export default function Cabinet() {
                 <div className="member-row" key={membership.documentId}>
                   <div><strong>{membership.player.username}</strong><small>{membership.player.email}</small></div>
                   <span>{membership.position === 'main' ? 'Основной' : membership.position === 'substitute' ? 'Запасной' : 'Тренер'}</span>
-                  {membership.player.id === team.captain?.id && <span className="tag">Капитан</span>}
+                  <div className="member-row__actions">
+                    {membership.player.id === team.captain?.id && <span className="tag">Капитан</span>}
+                    {isCaptain && membership.player.id !== team.captain?.id && <button type="button" className="mini-action mini-action--danger" disabled={removePlayerMutation.isPending} onClick={() => handleRemovePlayer(membership.documentId, membership.player.username)}>Удалить</button>}
+                  </div>
                 </div>
               ))}
             </div>
@@ -102,8 +142,17 @@ export default function Cabinet() {
 
           {isCaptain && (
             <div className="dashboard-grid">
+              <form className="panel form-grid" onSubmit={submitDisciplines} key={team.discipline?.map((item) => item.documentId).join('-')}>
+                <h2>Дисциплины команды</h2>
+                <p>Выберите все игры, в турнирах которых команда может участвовать.</p>
+                <fieldset className="discipline-picker form-grid__wide">{disciplinesQuery.data?.data.map((item) => <label key={item.documentId}><input type="checkbox" name="disciplines" value={item.documentId} defaultChecked={team.discipline?.some((selected) => selected.documentId === item.documentId)} /> {item.name} <small>Нужно игроков: {item.teamSize}</small></label>)}</fieldset>
+                {updateTeamMutation.error && <p className="form-error">{updateTeamMutation.error.message}</p>}
+                <Button type="submit" disabled={updateTeamMutation.isPending}>Сохранить дисциплины</Button>
+              </form>
+
               <form className="panel form-grid" onSubmit={submitPlayer}>
-                <h2>Добавить игрока</h2>
+                <h2>Создать нового игрока</h2>
+                <p>Используйте этот вариант, если у игрока ещё нет аккаунта.</p>
                 <label>Username<input name="username" required /></label>
                 <label>Никнейм<input name="nickname" required /></label>
                 <label>Email<input name="email" type="email" required /></label>
@@ -111,6 +160,15 @@ export default function Cabinet() {
                 <label>Позиция<select name="position"><option value="main">Основной</option><option value="substitute">Запасной</option><option value="coach">Тренер</option></select></label>
                 {playerMutation.error && <p className="form-error">{playerMutation.error.message}</p>}
                 <Button type="submit" disabled={playerMutation.isPending}>Создать игрока</Button>
+              </form>
+
+              <form className="panel form-grid" onSubmit={submitExistingPlayer}>
+                <h2>Добавить зарегистрированного</h2>
+                <p>Введите точный username или email существующего пользователя.</p>
+                <label className="form-grid__wide">Username или email<input name="identifier" required /></label>
+                <label>Позиция<select name="position"><option value="main">Основной</option><option value="substitute">Запасной</option><option value="coach">Тренер</option></select></label>
+                {existingPlayerMutation.error && <p className="form-error">{existingPlayerMutation.error.message}</p>}
+                <Button type="submit" disabled={existingPlayerMutation.isPending}>Добавить в состав</Button>
               </form>
 
               <section className="panel form-grid">

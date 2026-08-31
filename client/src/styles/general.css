@@ -109,6 +109,7 @@ button, input, select, textarea { font: inherit; }
 .page-heading h1, .article-page h1, .tournament-hero h1, .dashboard h1 { font-size: clamp(2.2rem, 5vw, 4.5rem); line-height: 1; }
 .eyebrow { color: var(--blue); font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
 .tag { display: inline-block; padding: .3rem .7rem; border-radius: 999px; background: #e7f3ff; color: #1769aa; font-size: .8rem; font-weight: 800; }
+.tags { display: flex; flex-wrap: wrap; gap: .45rem; }
 .form-error { color: #b42318; background: #fff1f0; border-radius: 8px; padding: .75rem; }
 .button-link { display: inline-block; margin-top: 1.5rem; padding: .8rem 1.1rem; background: var(--blue); color: white; border-radius: 8px; }
 .button-link:hover { color: white; }
@@ -121,14 +122,27 @@ button, input, select, textarea { font: inherit; }
 
 .dashboard { padding-top: 3rem; padding-bottom: 5rem; display: grid; gap: 2rem; }
 .dashboard__header { display: flex; justify-content: space-between; align-items: start; gap: 2rem; }
+.dashboard__actions { display: flex; align-items: center; gap: 1rem; }
+.dashboard__actions .button-link { margin-top: .5rem; }
 .dashboard-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: end; }
 .form-grid h2, .form-grid > p, .form-grid > .form-error { grid-column: 1 / -1; }
 .form-grid__wide { grid-column: 1 / -1; }
+.discipline-picker { border: 1px solid #dce7f4; border-radius: 10px; padding: 1rem; display: flex; flex-wrap: wrap; gap: .75rem; }
+.discipline-picker legend { font-weight: 800; padding: 0 .4rem; }
+.discipline-picker label { display: flex; align-items: center; gap: .35rem; background: #f7faff; border-radius: 8px; padding: .65rem .8rem; }
+.discipline-picker input { padding: 0; }
+.discipline-picker small { color: #6d7887; }
 .team-summary { display: flex; justify-content: space-between; gap: 2rem; }
 .members-list { display: grid; gap: .7rem; }
 .member-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1rem; padding: .9rem; border-radius: 10px; background: #f7faff; }
 .member-row small { display: block; color: #6d7887; }
+.member-row__actions { display: flex; align-items: center; justify-content: flex-end; gap: .5rem; }
+.profile-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr); gap: 2rem; align-items: start; }
+.profile-avatar { display: flex; align-items: center; gap: 1.5rem; }
+.profile-avatar img { width: 120px; height: 120px; border-radius: 16px; object-fit: cover; }
+.profile-avatar label { flex: 1; }
+.password-form { grid-template-columns: 1fr; }
 
 .cards-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
 .team-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
@@ -167,7 +181,7 @@ button, input, select, textarea { font: inherit; }
 .article-gallery img { width: 100%; height: 280px; object-fit: cover; border-radius: 12px; }
 
 @media (max-width: 900px) {
-    .cards-grid, .dashboard-grid, .team-cards { grid-template-columns: 1fr; }
+    .cards-grid, .dashboard-grid, .team-cards, .profile-layout { grid-template-columns: 1fr; }
     .tournament-layout { grid-template-columns: 1fr; }
     .registration-panel { position: static; }
 }
@@ -175,6 +189,7 @@ button, input, select, textarea { font: inherit; }
 @media (max-width: 640px) {
     .container { padding-left: 20px; padding-right: 20px; }
     .page-heading, .dashboard__header, .team-summary { flex-direction: column; align-items: stretch; }
+    .dashboard__actions { justify-content: space-between; }
     .form-grid { grid-template-columns: 1fr; }
     .form-grid__wide { grid-column: auto; }
     .member-row { grid-template-columns: 1fr; }

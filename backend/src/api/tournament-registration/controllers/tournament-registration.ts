@@ -54,7 +54,10 @@ export default factories.createCoreController('api::tournament-registration.tour
       populate: ['discipline', 'memberships.player'],
     });
     if (!team) throw new BadRequestError('Сначала создайте команду или войдите как её капитан');
-    if (team.discipline?.id !== tournament.discipline?.id) throw new BadRequestError('Дисциплина команды не соответствует турниру');
+    const teamDisciplines = Array.isArray(team.discipline) ? team.discipline : team.discipline ? [team.discipline] : [];
+    if (!teamDisciplines.some((discipline: any) => discipline.id === tournament.discipline?.id)) {
+      throw new BadRequestError('Команда не участвует в дисциплине этого турнира');
+    }
 
     const duplicate = await strapi.db.query('api::tournament-registration.tournament-registration').findOne({
       where: { tournament: tournament.id, team: team.id, status: { $ne: 'withdrawn' } },
@@ -69,9 +72,8 @@ export default factories.createCoreController('api::tournament-registration.tour
     const activeMembers = team.memberships.filter((item: any) => item.status === 'active' && item.position !== 'coach');
     const selectedIds = Array.isArray(playerIds) && playerIds.length > 0 ? playerIds : activeMembers.map((item: any) => item.player.id);
     const selected = activeMembers.filter((item: any) => selectedIds.includes(item.player.id));
-    const mainPlayers = selected.filter((item: any) => item.position === 'main');
-    if (mainPlayers.length !== tournament.teamSize) {
-      throw new BadRequestError(`В заявке должно быть ${tournament.teamSize} основных игроков`);
+    if (selected.length !== tournament.teamSize) {
+      throw new BadRequestError(`В заявке должно быть ${tournament.teamSize} игроков`);
     }
 
     const registration = await strapi.db.transaction(async () => {
@@ -94,7 +96,7 @@ export default factories.createCoreController('api::tournament-registration.tour
             registration: created.documentId,
             player: membership.player.id,
             nicknameSnapshot: profile?.nickname ?? membership.player.username,
-            position: membership.position,
+            position: 'main',
           },
         });
       }

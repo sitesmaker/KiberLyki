@@ -24,7 +24,12 @@ const AUTHENTICATED_ACTIONS = [
   'api::team.team.createMine',
   'api::team.team.updateMine',
   'api::team.team.addPlayer',
+  'api::team.team.addExistingPlayer',
+  'api::team.team.removePlayer',
   'api::team.team.transferCaptain',
+  'api::player-profile.player-profile.mine',
+  'api::player-profile.player-profile.updateMine',
+  'plugin::upload.content-api.upload',
   'api::tournament-registration.tournament-registration.mine',
   'api::tournament-registration.tournament-registration.listForTournament',
   'api::tournament-registration.tournament-registration.registerTeam',
@@ -57,6 +62,17 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    // Браузеры могут закрывать текущий поток видео перед повторным Range-запросом.
+    // Upload middleware Strapi уже игнорирует EPIPE для этого сценария, но не
+    // эквивалентный Windows/Node код ECONNRESET, из-за чего штатная отмена
+    // запроса выглядела в консоли как серверная ошибка.
+    const app = strapi.server.app;
+    const originalOnError = app.onerror.bind(app);
+    app.onerror = (error: Error & { code?: string }) => {
+      if (error.code === 'ECONNRESET') return;
+      originalOnError(error);
+    };
+
     const roleQuery = strapi.db.query('plugin::users-permissions.role');
     const publicRole = await roleQuery.findOne({ where: { type: 'public' } });
     const authenticatedRole = await roleQuery.findOne({ where: { type: 'authenticated' } });

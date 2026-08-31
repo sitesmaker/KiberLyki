@@ -9,7 +9,7 @@
     "description": { "type": "text" },
     "logo": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
     "isActive": { "type": "boolean", "required": true, "default": true },
-    "discipline": { "type": "relation", "relation": "manyToOne", "target": "api::discipline.discipline", "inversedBy": "teams" },
+    "discipline": { "type": "relation", "relation": "manyToMany", "target": "api::discipline.discipline", "inversedBy": "teams" },
     "captain": { "type": "relation", "relation": "manyToOne", "target": "plugin::users-permissions.user" },
     "memberships": { "type": "relation", "relation": "oneToMany", "target": "api::team-membership.team-membership", "mappedBy": "team" },
     "registrations": { "type": "relation", "relation": "oneToMany", "target": "api::tournament-registration.tournament-registration", "mappedBy": "team" }

@@ -25,9 +25,16 @@ export function getTeams() {
   return apiFetch<StrapiListResponse<Team>>(`/api/teams?${query}`);
 }
 
-export function createTeam(data: { name: string; description: string; discipline: string }) {
+export function createTeam(data: { name: string; description: string; disciplines: string[] }) {
   return apiFetch<{ data: Team }>('/api/teams/mine', {
     method: 'POST',
+    body: JSON.stringify({ data }),
+  });
+}
+
+export function updateTeam(teamId: string, data: { disciplines: string[] }) {
+  return apiFetch<{ data: Team }>(`/api/teams/${teamId}/mine`, {
+    method: 'PUT',
     body: JSON.stringify({ data }),
   });
 }
@@ -43,6 +50,17 @@ export function addPlayer(teamId: string, data: {
     method: 'POST',
     body: JSON.stringify({ data }),
   });
+}
+
+export function addExistingPlayer(teamId: string, data: { identifier: string; position: string }) {
+  return apiFetch(`/api/teams/${teamId}/players/existing`, {
+    method: 'POST',
+    body: JSON.stringify({ data }),
+  });
+}
+
+export function removePlayer(teamId: string, membershipId: string) {
+  return apiFetch(`/api/teams/${teamId}/players/${membershipId}`, { method: 'DELETE' });
 }
 
 export function transferCaptain(teamId: string, playerId: number) {

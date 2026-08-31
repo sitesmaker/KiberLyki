@@ -568,7 +568,7 @@ export interface ApiDisciplineDiscipline extends Struct.CollectionTypeSchema {
       Schema.Attribute.Unique;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
-    teams: Schema.Attribute.Relation<'oneToMany', 'api::team.team'>;
+    teams: Schema.Attribute.Relation<'manyToMany', 'api::team.team'>;
     teamSize: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMax<
@@ -933,7 +933,7 @@ export interface ApiTeamTeam extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
     discipline: Schema.Attribute.Relation<
-      'manyToOne',
+      'manyToMany',
       'api::discipline.discipline'
     >;
     isActive: Schema.Attribute.Boolean &
