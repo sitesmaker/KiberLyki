@@ -12,14 +12,7 @@ export function getTournaments() {
 }
 
 export function getTournament(documentId: string) {
-  const query = new URLSearchParams({
-    'populate[discipline]': 'true',
-    'populate[cover]': 'true',
-    'populate[matches][populate][0]': 'teamA',
-    'populate[matches][populate][1]': 'teamB',
-    'populate[matches][populate][2]': 'winner',
-  });
-  return apiFetch<StrapiSingleResponse<Tournament>>(`/api/tournaments/${documentId}?${query}`);
+  return apiFetch<StrapiSingleResponse<Tournament>>(`/api/tournaments/${documentId}/details`);
 }
 
 export function registerTeamForTournament(tournamentId: string, playerIds: number[]) {
@@ -41,10 +34,10 @@ export function getTournamentRegistrations(tournamentId: string) {
   return apiFetch<{ data: TournamentRegistration[] }>(`/api/tournaments/${tournamentId}/registrations`);
 }
 
-export function reviewRegistration(registrationId: string, status: 'approved' | 'rejected') {
+export function reviewRegistration(registrationId: string, registrationStatus: 'approved' | 'rejected') {
   return apiFetch(`/api/tournament-registrations/${registrationId}/review`, {
     method: 'PUT',
-    body: JSON.stringify({ data: { status } }),
+    body: JSON.stringify({ data: { registrationStatus } }),
   });
 }
 

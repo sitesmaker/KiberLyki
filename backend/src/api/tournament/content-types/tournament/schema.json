@@ -15,7 +15,7 @@
     "registrationStartsAt": { "type": "datetime", "required": true },
     "registrationEndsAt": { "type": "datetime", "required": true },
     "startsAt": { "type": "datetime", "required": true },
-    "status": { "type": "enumeration", "enum": ["draft", "registration", "check_in", "active", "finished", "cancelled"], "required": true, "default": "draft" },
+    "phase": { "type": "enumeration", "enum": ["draft", "registration", "check_in", "active", "finished", "cancelled"], "required": true, "default": "draft" },
     "discipline": { "type": "relation", "relation": "manyToOne", "target": "api::discipline.discipline", "inversedBy": "tournaments" },
     "registrations": { "type": "relation", "relation": "oneToMany", "target": "api::tournament-registration.tournament-registration", "mappedBy": "tournament" },
     "matches": { "type": "relation", "relation": "oneToMany", "target": "api::match.match", "mappedBy": "tournament" }

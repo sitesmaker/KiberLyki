@@ -14,8 +14,10 @@ const PUBLIC_ACTIONS = [
   'api::staff.staff.findOne',
   'api::team.team.find',
   'api::team.team.findOne',
+  'api::team.team.details',
   'api::tournament.tournament.find',
   'api::tournament.tournament.findOne',
+  'api::tournament.tournament.details',
 ];
 
 const AUTHENTICATED_ACTIONS = [

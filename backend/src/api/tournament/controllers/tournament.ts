@@ -9,6 +9,44 @@ function requireOrganizer(ctx: any) {
 }
 
 export default factories.createCoreController('api::tournament.tournament', ({ strapi }) => ({
+  async details(ctx) {
+    const tournament = await strapi.db.query('api::tournament.tournament').findOne({
+      where: { documentId: ctx.params.documentId, publishedAt: { $notNull: true } },
+      populate: ['discipline', 'cover', 'matches.teamA', 'matches.teamB', 'matches.winner', 'registrations.team'],
+    });
+    if (!tournament) throw new NotFoundError('Турнир не найден');
+
+    const teamView = (team: any) => team ? ({ id: team.id, documentId: team.documentId, name: team.name, slug: team.slug }) : null;
+    return ctx.send({
+      data: {
+        ...tournament,
+        matches: (tournament.matches ?? []).map((match: any) => ({
+          id: match.id,
+          documentId: match.documentId,
+          round: match.round,
+          position: match.position,
+          scoreA: match.scoreA,
+          scoreB: match.scoreB,
+          matchStatus: match.matchStatus,
+          scheduledAt: match.scheduledAt,
+          teamA: teamView(match.teamA),
+          teamB: teamView(match.teamB),
+          winner: teamView(match.winner),
+        })),
+        registrations: (tournament.registrations ?? [])
+          .filter((registration: any) => registration.registrationStatus === 'approved')
+          .map((registration: any) => ({
+            id: registration.id,
+            documentId: registration.documentId,
+            registrationStatus: registration.registrationStatus,
+            seed: registration.seed,
+            submittedAt: registration.submittedAt,
+            team: teamView(registration.team),
+          })),
+      },
+    });
+  },
+
   async generateBracket(ctx) {
     requireOrganizer(ctx);
     const tournament = await strapi.documents('api::tournament.tournament').findOne({
@@ -21,7 +59,7 @@ export default factories.createCoreController('api::tournament.tournament', ({ s
     if (existingMatches > 0) throw new BadRequestError('Сетка для турнира уже создана');
 
     const registrations = await strapi.db.query('api::tournament-registration.tournament-registration').findMany({
-      where: { tournament: tournament.id, status: 'approved' },
+      where: { tournament: tournament.id, registrationStatus: 'approved' },
       populate: ['team'],
       orderBy: [{ seed: 'asc' }, { submittedAt: 'asc' }],
     });
@@ -42,7 +80,7 @@ export default factories.createCoreController('api::tournament.tournament', ({ s
               tournament: tournament.documentId,
               round,
               position,
-              status: 'pending',
+              matchStatus: 'pending',
               nextMatch: next?.documentId,
               nextSlot: next ? (position % 2 === 1 ? 'A' : 'B') : null,
             },
@@ -66,7 +104,7 @@ export default factories.createCoreController('api::tournament.tournament', ({ s
             teamA: teamA?.documentId ?? null,
             teamB: teamB?.documentId ?? null,
             winner: automaticWinner?.documentId ?? null,
-            status: automaticWinner ? 'finished' : 'pending',
+            matchStatus: automaticWinner ? 'finished' : 'pending',
           },
         });
 
@@ -80,7 +118,7 @@ export default factories.createCoreController('api::tournament.tournament', ({ s
 
       await strapi.documents('api::tournament.tournament').update({
         documentId: tournament.documentId,
-        data: { status: 'active' },
+        data: { phase: 'active' },
       });
     });
 
@@ -100,13 +138,13 @@ export default factories.createCoreController('api::tournament.tournament', ({ s
     });
     if (!match || match.tournament?.documentId !== ctx.params.documentId) throw new NotFoundError('Матч не найден');
     if (!match.teamA || !match.teamB) throw new BadRequestError('У матча ещё нет обеих команд');
-    if (match.status === 'finished') throw new BadRequestError('Результат матча уже зафиксирован');
+    if (match.matchStatus === 'finished') throw new BadRequestError('Результат матча уже зафиксирован');
 
     const winner = scoreA > scoreB ? match.teamA : match.teamB;
     await strapi.db.transaction(async () => {
       await strapi.documents('api::match.match').update({
         documentId: match.documentId,
-        data: { scoreA, scoreB, winner: winner.documentId, status: 'finished' },
+        data: { scoreA, scoreB, winner: winner.documentId, matchStatus: 'finished' },
       });
 
       if (match.nextMatch) {
@@ -117,7 +155,7 @@ export default factories.createCoreController('api::tournament.tournament', ({ s
       } else {
         await strapi.documents('api::tournament.tournament').update({
           documentId: match.tournament.documentId,
-          data: { status: 'finished' },
+          data: { phase: 'finished' },
         });
       }
     });

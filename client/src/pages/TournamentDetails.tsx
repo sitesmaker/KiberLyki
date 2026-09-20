@@ -19,7 +19,7 @@ export default function TournamentDetails() {
   const teamQuery = useQuery({ queryKey: ['my-team'], queryFn: getMyTeam, enabled: Boolean(user) });
   const [selected, setSelected] = useState<number[]>([]);
   const tournament = tournamentQuery.data?.data;
-  const activePlayers = useMemo(() => teamQuery.data?.data?.memberships?.filter((item) => item.status === 'active' && item.position !== 'coach') ?? [], [teamQuery.data]);
+  const activePlayers = useMemo(() => teamQuery.data?.data?.memberships?.filter((item) => item.membershipStatus === 'active' && item.position !== 'coach') ?? [], [teamQuery.data]);
 
   const registerMutation = useMutation({
     mutationFn: () => registerTeamForTournament(documentId, selected),
@@ -28,7 +28,9 @@ export default function TournamentDetails() {
 
   if (tournamentQuery.isLoading) return <div className="page-message">Загрузка турнира...</div>;
   if (!tournament) return <div className="page-message">Турнир не найден</div>;
-  const canRegister = tournament.status === 'registration';
+  const canRegister = tournament.phase === 'registration';
+  const approvedTeams = tournament.registrations?.filter((item) => item.registrationStatus === 'approved') ?? [];
+  const finalMatch = tournament.matches?.find((match) => match.round === Math.max(0, ...(tournament.matches?.map((item) => item.round) ?? [])));
 
   return (
     <main>
@@ -38,7 +40,7 @@ export default function TournamentDetails() {
 
       <div className="container tournament-layout">
         {user?.role?.type === 'organizer' && <div className="tournament-layout__wide"><OrganizerPanel tournament={tournament} /></div>}
-        <section className="panel"><h2>Турнирная сетка</h2><Bracket matches={tournament.matches ?? []} /></section>
+        <section className="panel"><div className="bracket-heading"><div><h2>Турнирная сетка</h2><p>Победитель каждого матча проходит в следующий раунд. Проигравшая команда выбывает.</p></div>{finalMatch?.winner && <div className="champion"><small>Победитель турнира</small><Link to={`/teams/${finalMatch.winner.documentId}`}>🏆 {finalMatch.winner.name}</Link></div>}</div><Bracket matches={tournament.matches ?? []} /></section>
         <aside className="panel registration-panel">
           <h2>Заявка команды</h2>
           {!user && <p><Link to="/login">Войдите как капитан</Link>, чтобы отправить заявку.</p>}
@@ -55,6 +57,7 @@ export default function TournamentDetails() {
             </>
           )}
         </aside>
+        <section className="panel tournament-teams"><h2>Команды турнира</h2>{approvedTeams.length ? <ol>{approvedTeams.map((registration) => <li key={registration.documentId}><Link to={`/teams/${registration.team.documentId}`}>{registration.team.name}</Link>{registration.seed && <small>Посев №{registration.seed}</small>}</li>)}</ol> : <p>Одобренных команд пока нет.</p>}</section>
         {tournament.rules && <section className="panel rules"><h2>Правила</h2><div className="rich-text">{tournament.rules}</div></section>}
       </div>
     </main>

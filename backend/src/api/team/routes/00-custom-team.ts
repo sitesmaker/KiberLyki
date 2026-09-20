@@ -1,5 +1,6 @@
 export default {
   routes: [
+    { method: 'GET', path: '/teams/:documentId/details', handler: 'team.details', config: { auth: false } },
     { method: 'GET', path: '/teams/mine', handler: 'team.mine' },
     { method: 'POST', path: '/teams/mine', handler: 'team.createMine' },
     { method: 'PUT', path: '/teams/:documentId/mine', handler: 'team.updateMine' },

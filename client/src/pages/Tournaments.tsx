@@ -17,7 +17,7 @@ export default function Tournaments() {
         {query.data?.data.map((tournament) => (
           <Link className="tournament-card" to={`/tournaments/${tournament.documentId}`} key={tournament.documentId}>
             {tournament.cover && <img src={getMediaUrl(tournament.cover.url)} alt={tournament.title} />}
-            <div><span className="tag">{tournament.discipline?.name}</span><h2>{tournament.title}</h2><p>{statusLabels[tournament.status]}</p><small>{new Date(tournament.startsAt).toLocaleString('ru-RU')}</small></div>
+            <div><span className="tag">{tournament.discipline?.name}</span><h2>{tournament.title}</h2><p>{statusLabels[tournament.phase]}</p><small>{new Date(tournament.startsAt).toLocaleString('ru-RU')}</small></div>
           </Link>
         ))}
       </div>

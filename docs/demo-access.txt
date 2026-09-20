@@ -1,0 +1,45 @@
+KiberLyki — демонстрационные доступы
+Создано: 20.09.2026, 23:15:43
+
+Общий временный пароль для всех аккаунтов: Cyber2026!
+После входа игрок может изменить пароль в разделе «Мой профиль».
+
+ОРГАНИЗАТОР
+Логин: demo-organizer
+Email: organizer@demo.kiberlyki.local
+Пароль: Cyber2026!
+
+КОМАНДА: Northern Wolves
+[КАПИТАН] Frost — логин: frostcaptain; email: frostcaptain@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Blizzard — логин: blizzard; email: blizzard@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] NorthStar — логин: northstar; email: northstar@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Polar — логин: polar; email: polar@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] TundraFox — логин: tundrafox; email: tundrafox@demo.kiberlyki.local; пароль: Cyber2026!
+
+КОМАНДА: Volga Storm
+[КАПИТАН] StormLead — логин: stormcaptain; email: stormcaptain@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Spark — логин: spark; email: spark@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] River — логин: river; email: river@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Volt — логин: volt; email: volt@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Anchor — логин: anchor; email: anchor@demo.kiberlyki.local; пароль: Cyber2026!
+
+КОМАНДА: Cyber Bears
+[КАПИТАН] OldBear — логин: bearcaptain; email: bearcaptain@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Claw — логин: claw; email: claw@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Honey — логин: honey; email: honey@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] ForestX — логин: forest; email: forest@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Roar — логин: roar; email: roar@demo.kiberlyki.local; пароль: Cyber2026!
+
+КОМАНДА: Neon Dragons
+[КАПИТАН] Neon — логин: dragoncaptain; email: dragoncaptain@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Ember — логин: ember; email: ember@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Pixel — логин: pixel; email: pixel@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Nova — логин: nova; email: nova@demo.kiberlyki.local; пароль: Cyber2026!
+[ИГРОК] Scale — логин: scale; email: scale@demo.kiberlyki.local; пароль: Cyber2026!
+
+Что проверить:
+1. Войти капитаном и открыть /cabinet.
+2. Добавить зарегистрированного игрока по username/email или удалить игрока.
+3. Открыть /teams и перейти в карточку команды.
+4. Открыть любой турнир: завершённый показывает чемпиона, текущий — live-финал, будущий — регистрацию.
+5. Войти организатором, чтобы принимать заявки и фиксировать результаты матчей.

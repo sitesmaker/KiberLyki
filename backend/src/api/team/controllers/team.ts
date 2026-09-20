@@ -22,7 +22,39 @@ async function findCaptainTeam(strapi: any, documentId: string, userId: number) 
   return team;
 }
 
+async function withPlayerProfiles(strapi: any, team: any) {
+  if (!team) return null;
+  const memberships = team.memberships ?? [];
+  const playerIds = memberships.map((membership: any) => membership.player?.id).filter(Boolean);
+  const profiles = playerIds.length
+    ? await strapi.db.query('api::player-profile.player-profile').findMany({
+        where: { user: { id: { $in: playerIds } } },
+        populate: ['user', 'avatar'],
+      })
+    : [];
+  const profileByUserId = new Map(profiles.map((profile: any) => [profile.user?.id, profile]));
+
+  return {
+    ...team,
+    memberships: memberships.map((membership: any) => ({
+      ...membership,
+      player: membership.player
+        ? { ...membership.player, profile: profileByUserId.get(membership.player.id) ?? null }
+        : null,
+    })),
+  };
+}
+
 export default factories.createCoreController('api::team.team', ({ strapi }) => ({
+  async details(ctx) {
+    const team = await strapi.documents('api::team.team').findOne({
+      documentId: ctx.params.documentId,
+      populate: ['captain', 'discipline', 'logo', 'memberships.player'],
+    });
+    if (!team || !team.isActive) throw new NotFoundError('Команда не найдена');
+    return ctx.send({ data: await withPlayerProfiles(strapi, team) });
+  },
+
   async mine(ctx) {
     const userId = ctx.state.user.id;
     const captainTeam = await strapi.db.query('api::team.team').findOne({
@@ -30,14 +62,14 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
       populate: ['captain', 'discipline', 'logo', 'memberships.player'],
     });
 
-    if (captainTeam) return ctx.send({ data: captainTeam, meta: { isCaptain: true } });
+    if (captainTeam) return ctx.send({ data: await withPlayerProfiles(strapi, captainTeam), meta: { isCaptain: true } });
 
     const membership = await strapi.db.query('api::team-membership.team-membership').findOne({
-      where: { player: userId, status: 'active' },
+      where: { player: userId, membershipStatus: 'active' },
       populate: ['team.captain', 'team.discipline', 'team.logo', 'team.memberships.player'],
     });
 
-    return ctx.send({ data: membership?.team ?? null, meta: { isCaptain: false } });
+    return ctx.send({ data: await withPlayerProfiles(strapi, membership?.team), meta: { isCaptain: false } });
   },
 
   async createMine(ctx) {
@@ -68,7 +100,7 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
         data: {
           team: created.documentId,
           player: userId,
-          status: 'active',
+          membershipStatus: 'active',
           position: 'main',
           joinedAt: new Date().toISOString(),
         },
@@ -140,7 +172,7 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
         data: {
           team: team.documentId,
           player: player.id,
-          status: 'active',
+          membershipStatus: 'active',
           position,
           joinedAt: new Date().toISOString(),
         },
@@ -173,26 +205,26 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
     if (!player || player.blocked) throw new NotFoundError('Активный пользователь с таким username или email не найден');
 
     const activeMembership = await strapi.db.query('api::team-membership.team-membership').findOne({
-      where: { player: player.id, status: 'active' },
+      where: { player: player.id, membershipStatus: 'active' },
       populate: ['team'],
     });
     if (activeMembership?.team?.id === team.id) throw new BadRequestError('Игрок уже находится в составе этой команды');
     if (activeMembership) throw new BadRequestError('Игрок уже состоит в другой активной команде');
 
     const previousMembership = await strapi.db.query('api::team-membership.team-membership').findOne({
-      where: { team: team.id, player: player.id, status: { $in: ['left', 'removed'] } },
+      where: { team: team.id, player: player.id, membershipStatus: { $in: ['left', 'removed'] } },
     });
 
     const membership = previousMembership
       ? await strapi.documents('api::team-membership.team-membership').update({
           documentId: previousMembership.documentId,
-          data: { status: 'active', position, joinedAt: new Date().toISOString(), leftAt: null },
+          data: { membershipStatus: 'active', position, joinedAt: new Date().toISOString(), leftAt: null },
         })
       : await strapi.documents('api::team-membership.team-membership').create({
           data: {
             team: team.documentId,
             player: player.id,
-            status: 'active',
+            membershipStatus: 'active',
             position,
             joinedAt: new Date().toISOString(),
           },
@@ -211,7 +243,7 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
       populate: ['team', 'player'],
     });
 
-    if (!membership || membership.team?.id !== team.id || membership.status !== 'active') {
+    if (!membership || membership.team?.id !== team.id || membership.membershipStatus !== 'active') {
       throw new NotFoundError('Активный игрок не найден в составе команды');
     }
     if (membership.player?.id === captainId) {
@@ -220,7 +252,7 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
 
     const updated = await strapi.documents('api::team-membership.team-membership').update({
       documentId: membership.documentId,
-      data: { status: 'removed', leftAt: new Date().toISOString() },
+      data: { membershipStatus: 'removed', leftAt: new Date().toISOString() },
     });
     return ctx.send({ data: updated });
   },
@@ -234,7 +266,7 @@ export default factories.createCoreController('api::team.team', ({ strapi }) => 
 
     const team = await findCaptainTeam(strapi, documentId, captainId);
     const membership = await strapi.db.query('api::team-membership.team-membership').findOne({
-      where: { team: team.id, player: playerId, status: 'active' },
+      where: { team: team.id, player: playerId, membershipStatus: 'active' },
     });
     if (!membership) throw new BadRequestError('Новый капитан должен быть активным игроком команды');
 

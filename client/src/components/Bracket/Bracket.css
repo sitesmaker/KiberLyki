@@ -2,6 +2,10 @@
 .bracket__round { min-width: 240px; display: flex; flex-direction: column; }
 .bracket__matches { flex: 1; display: flex; flex-direction: column; justify-content: space-around; gap: 1rem; }
 .bracket-match { border: 1px solid #dbe6f4; border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 4px 14px #12233a12; }
+.bracket-match header { display: flex; justify-content: space-between; gap: .5rem; padding: .45rem .8rem; background: #f3f7fb; color: #637083; font-size: .75rem; }
 .bracket-match > div { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem .8rem; }
 .bracket-match > div + div { border-top: 1px solid #dbe6f4; }
 .bracket-match__winner { background: #eaf6ff; color: #1769aa; }
+.bracket-match__loser { opacity: .58; }
+.bracket-match a { display: flex; align-items: center; justify-content: space-between; gap: .5rem; color: inherit; width: 100%; }
+.bracket-result { margin-left: auto; font-size: .65rem; text-transform: uppercase; letter-spacing: .05em; }

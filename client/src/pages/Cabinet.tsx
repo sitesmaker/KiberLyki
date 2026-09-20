@@ -6,6 +6,7 @@ import { addExistingPlayer, addPlayer, createTeam, getDisciplines, getMyTeam, re
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { getMyRegistrations, withdrawRegistration } from '../api/tournaments';
+import { getMediaUrl } from '../api/client';
 
 export default function Cabinet() {
   const { user, logout } = useAuth();
@@ -121,15 +122,15 @@ export default function Cabinet() {
         <>
           <section className="panel team-summary">
             <div><div className="tags">{team.discipline?.map((item) => <span className="tag" key={item.documentId}>{item.name}</span>)}</div><h2>{team.name}</h2><p>{team.description || 'Описание пока не добавлено'}</p></div>
-            <div><strong>{isCaptain ? 'Вы капитан' : 'Вы игрок'}</strong><p>Состав: {team.memberships?.filter((item) => item.status === 'active').length ?? 0}</p></div>
+            <div><strong>{isCaptain ? 'Вы капитан' : 'Вы игрок'}</strong><p>Состав: {team.memberships?.filter((item) => item.membershipStatus === 'active').length ?? 0}</p></div>
           </section>
 
           <section className="panel">
             <h2>Состав</h2>
             <div className="members-list">
-              {team.memberships?.filter((item) => item.status === 'active').map((membership) => (
+              {team.memberships?.filter((item) => item.membershipStatus === 'active').map((membership) => (
                 <div className="member-row" key={membership.documentId}>
-                  <div><strong>{membership.player.username}</strong><small>{membership.player.email}</small></div>
+                  <div className="member-row__identity">{membership.player.profile?.avatar ? <img className="player-avatar player-avatar--tiny" src={getMediaUrl(membership.player.profile.avatar.url)} alt="" /> : <span className="player-avatar player-avatar--tiny">{(membership.player.profile?.nickname || membership.player.username).slice(0, 2).toUpperCase()}</span>}<div><strong>{membership.player.profile?.nickname || membership.player.username}</strong><small>{membership.player.email}</small></div></div>
                   <span>{membership.position === 'main' ? 'Основной' : membership.position === 'substitute' ? 'Запасной' : 'Тренер'}</span>
                   <div className="member-row__actions">
                     {membership.player.id === team.captain?.id && <span className="tag">Капитан</span>}
@@ -176,7 +177,7 @@ export default function Cabinet() {
                 <p>После передачи управлять командой сможет выбранный игрок.</p>
                 <select value={captainTarget} onChange={(event) => setCaptainTarget(event.target.value)}>
                   <option value="">Выберите игрока</option>
-                  {team.memberships?.filter((item) => item.status === 'active' && item.player.id !== team.captain?.id).map((item) => <option key={item.documentId} value={item.player.id}>{item.player.username}</option>)}
+                  {team.memberships?.filter((item) => item.membershipStatus === 'active' && item.player.id !== team.captain?.id).map((item) => <option key={item.documentId} value={item.player.id}>{item.player.username}</option>)}
                 </select>
                 <Button type="button" disabled={!captainTarget || transferMutation.isPending} onClick={() => transferMutation.mutate({ teamId: team.documentId, playerId: Number(captainTarget) })}>Передать права</Button>
               </section>
@@ -192,8 +193,8 @@ export default function Cabinet() {
           {registrationsQuery.data?.data.map((registration) => (
             <div className="member-row" key={registration.documentId}>
               <div><Link to={`/tournaments/${registration.tournament?.documentId}`}><strong>{registration.tournament?.title}</strong></Link><small>{new Date(registration.submittedAt).toLocaleString('ru-RU')}</small></div>
-              <span>{registration.status}</span>
-              {['pending', 'approved'].includes(registration.status) && <button className="mini-action mini-action--danger" onClick={() => withdrawMutation.mutate(registration.documentId)}>Отозвать</button>}
+              <span>{registration.registrationStatus}</span>
+              {['pending', 'approved'].includes(registration.registrationStatus) && <button className="mini-action mini-action--danger" onClick={() => withdrawMutation.mutate(registration.documentId)}>Отозвать</button>}
             </div>
           ))}
           {!registrationsQuery.isLoading && registrationsQuery.data?.data.length === 0 && <p>Заявок пока нет.</p>}

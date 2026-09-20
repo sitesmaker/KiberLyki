@@ -14,6 +14,7 @@ export interface User {
   confirmed?: boolean;
   blocked?: boolean;
   role?: UserRole;
+  profile?: PlayerProfile | null;
 }
 
 export interface PlayerProfile {
@@ -43,7 +44,7 @@ export type MemberPosition = 'main' | 'substitute' | 'coach';
 export interface TeamMembership {
   id: number;
   documentId: string;
-  status: 'invited' | 'active' | 'left' | 'removed';
+  membershipStatus: 'invited' | 'active' | 'left' | 'removed';
   position: MemberPosition;
   joinedAt?: string;
   player: User;
@@ -71,10 +72,11 @@ export interface Match {
   position: number;
   scoreA?: number | null;
   scoreB?: number | null;
-  status: 'pending' | 'scheduled' | 'live' | 'finished';
+  matchStatus: 'pending' | 'scheduled' | 'live' | 'finished';
   teamA?: Team | null;
   teamB?: Team | null;
   winner?: Team | null;
+  scheduledAt?: string | null;
 }
 
 export interface Tournament {
@@ -91,15 +93,16 @@ export interface Tournament {
   registrationStartsAt: string;
   registrationEndsAt: string;
   startsAt: string;
-  status: TournamentStatus;
+  phase: TournamentStatus;
   discipline: Discipline;
   matches?: Match[];
+  registrations?: TournamentRegistration[];
 }
 
 export interface TournamentRegistration {
   id: number;
   documentId: string;
-  status: 'pending' | 'approved' | 'rejected' | 'withdrawn';
+  registrationStatus: 'pending' | 'approved' | 'rejected' | 'withdrawn';
   submittedAt: string;
   rejectionReason?: string | null;
   seed?: number | null;

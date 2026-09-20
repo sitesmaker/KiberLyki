@@ -13,6 +13,7 @@ import Cabinet from './pages/Cabinet.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import { AuthProvider } from './context/AuthProvider.tsx';
 import PlayerProfilePage from './pages/PlayerProfile.tsx';
+import TeamDetails from './pages/TeamDetails.tsx';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/teams" element={<Teams />} />
+          <Route path="/teams/:documentId" element={<TeamDetails />} />
           <Route path="/articles" element={<Articles />} />
           <Route path="/articles/:identifier" element={<ArticleDetails />} />
           <Route path="/tournaments" element={<Tournaments />} />

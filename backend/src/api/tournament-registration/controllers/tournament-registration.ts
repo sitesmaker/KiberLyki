@@ -44,7 +44,7 @@ export default factories.createCoreController('api::tournament-registration.tour
     if (!tournament) throw new NotFoundError('Турнир не найден');
 
     const now = Date.now();
-    if (tournament.status !== 'registration') throw new BadRequestError('Регистрация на турнир закрыта');
+    if (tournament.phase !== 'registration') throw new BadRequestError('Регистрация на турнир закрыта');
     if (now < new Date(tournament.registrationStartsAt).getTime() || now > new Date(tournament.registrationEndsAt).getTime()) {
       throw new BadRequestError('Сейчас регистрация на турнир недоступна');
     }
@@ -60,16 +60,16 @@ export default factories.createCoreController('api::tournament-registration.tour
     }
 
     const duplicate = await strapi.db.query('api::tournament-registration.tournament-registration').findOne({
-      where: { tournament: tournament.id, team: team.id, status: { $ne: 'withdrawn' } },
+      where: { tournament: tournament.id, team: team.id, registrationStatus: { $ne: 'withdrawn' } },
     });
     if (duplicate) throw new BadRequestError('Команда уже подавала заявку на этот турнир');
 
     const occupied = await strapi.db.query('api::tournament-registration.tournament-registration').count({
-      where: { tournament: tournament.id, status: { $in: ['pending', 'approved'] } },
+      where: { tournament: tournament.id, registrationStatus: { $in: ['pending', 'approved'] } },
     });
     if (occupied >= tournament.maxTeams) throw new BadRequestError('Достигнут лимит команд');
 
-    const activeMembers = team.memberships.filter((item: any) => item.status === 'active' && item.position !== 'coach');
+    const activeMembers = team.memberships.filter((item: any) => item.membershipStatus === 'active' && item.position !== 'coach');
     const selectedIds = Array.isArray(playerIds) && playerIds.length > 0 ? playerIds : activeMembers.map((item: any) => item.player.id);
     const selected = activeMembers.filter((item: any) => selectedIds.includes(item.player.id));
     if (selected.length !== tournament.teamSize) {
@@ -82,7 +82,7 @@ export default factories.createCoreController('api::tournament-registration.tour
           tournament: tournament.documentId,
           team: team.documentId,
           submittedBy: userId,
-          status: 'pending',
+          registrationStatus: 'pending',
           submittedAt: new Date().toISOString(),
         },
       });
@@ -114,30 +114,30 @@ export default factories.createCoreController('api::tournament-registration.tour
     });
     if (!registration) throw new NotFoundError('Заявка не найдена');
     if (registration.submittedBy?.id !== ctx.state.user.id) throw new ForbiddenError('Это не ваша заявка');
-    if (!['pending', 'approved'].includes(registration.status)) throw new BadRequestError('Заявку уже нельзя отозвать');
-    if (registration.tournament?.status === 'active') throw new BadRequestError('Турнир уже начался');
+    if (!['pending', 'approved'].includes(registration.registrationStatus)) throw new BadRequestError('Заявку уже нельзя отозвать');
+    if (registration.tournament?.phase === 'active') throw new BadRequestError('Турнир уже начался');
 
     const data = await strapi.documents('api::tournament-registration.tournament-registration').update({
       documentId: registration.documentId,
-      data: { status: 'withdrawn' },
+      data: { registrationStatus: 'withdrawn' },
     });
     return ctx.send({ data });
   },
 
   async review(ctx) {
     requireOrganizer(ctx);
-    const { status, rejectionReason, seed } = ctx.request.body?.data ?? {};
-    if (!['approved', 'rejected'].includes(status)) throw new BadRequestError('Допустимы статусы approved и rejected');
+    const { registrationStatus, rejectionReason, seed } = ctx.request.body?.data ?? {};
+    if (!['approved', 'rejected'].includes(registrationStatus)) throw new BadRequestError('Допустимы статусы approved и rejected');
 
     const registration = await strapi.documents('api::tournament-registration.tournament-registration').findOne({
       documentId: ctx.params.documentId,
     });
     if (!registration) throw new NotFoundError('Заявка не найдена');
-    if (registration.status !== 'pending') throw new BadRequestError('Решение по заявке уже принято');
+    if (registration.registrationStatus !== 'pending') throw new BadRequestError('Решение по заявке уже принято');
 
     const data = await strapi.documents('api::tournament-registration.tournament-registration').update({
       documentId: registration.documentId,
-      data: { status, rejectionReason: status === 'rejected' ? rejectionReason : null, seed: status === 'approved' ? seed : null },
+      data: { registrationStatus, rejectionReason: registrationStatus === 'rejected' ? rejectionReason : null, seed: registrationStatus === 'approved' ? seed : null },
     });
     return ctx.send({ data });
   },

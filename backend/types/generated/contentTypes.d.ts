@@ -635,6 +635,11 @@ export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::match.match'> &
       Schema.Attribute.Private;
+    matchStatus: Schema.Attribute.Enumeration<
+      ['pending', 'scheduled', 'live', 'finished']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'pending'>;
     nextMatch: Schema.Attribute.Relation<'manyToOne', 'api::match.match'>;
     nextSlot: Schema.Attribute.Enumeration<['A', 'B']>;
     position: Schema.Attribute.Integer &
@@ -669,11 +674,6 @@ export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
         },
         number
       >;
-    status: Schema.Attribute.Enumeration<
-      ['pending', 'scheduled', 'live', 'finished']
-    > &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'pending'>;
     teamA: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
     teamB: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
     tournament: Schema.Attribute.Relation<
@@ -893,6 +893,11 @@ export interface ApiTeamMembershipTeamMembership
       'api::team-membership.team-membership'
     > &
       Schema.Attribute.Private;
+    membershipStatus: Schema.Attribute.Enumeration<
+      ['invited', 'active', 'left', 'removed']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'active'>;
     player: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.user'
@@ -901,11 +906,6 @@ export interface ApiTeamMembershipTeamMembership
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'main'>;
     publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<
-      ['invited', 'active', 'left', 'removed']
-    > &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'active'>;
     team: Schema.Attribute.Relation<'manyToOne', 'api::team.team'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -988,6 +988,11 @@ export interface ApiTournamentRegistrationTournamentRegistration
       'api::registration-player.registration-player'
     >;
     publishedAt: Schema.Attribute.DateTime;
+    registrationStatus: Schema.Attribute.Enumeration<
+      ['pending', 'approved', 'rejected', 'withdrawn']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'pending'>;
     rejectionReason: Schema.Attribute.Text;
     seed: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
@@ -996,11 +1001,6 @@ export interface ApiTournamentRegistrationTournamentRegistration
         },
         number
       >;
-    status: Schema.Attribute.Enumeration<
-      ['pending', 'approved', 'rejected', 'withdrawn']
-    > &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'pending'>;
     submittedAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
     submittedBy: Schema.Attribute.Relation<
       'manyToOne',
@@ -1056,6 +1056,11 @@ export interface ApiTournamentTournament extends Struct.CollectionTypeSchema {
         number
       > &
       Schema.Attribute.DefaultTo<8>;
+    phase: Schema.Attribute.Enumeration<
+      ['draft', 'registration', 'check_in', 'active', 'finished', 'cancelled']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'draft'>;
     publishedAt: Schema.Attribute.DateTime;
     registrationEndsAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
     registrations: Schema.Attribute.Relation<
@@ -1066,11 +1071,6 @@ export interface ApiTournamentTournament extends Struct.CollectionTypeSchema {
     rules: Schema.Attribute.RichText;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     startsAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    status: Schema.Attribute.Enumeration<
-      ['draft', 'registration', 'check_in', 'active', 'finished', 'cancelled']
-    > &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<'draft'>;
     teamSize: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMax<

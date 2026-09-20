@@ -4,7 +4,7 @@
   "info": { "singularName": "tournament-registration", "pluralName": "tournament-registrations", "displayName": "Tournament registration" },
   "options": { "draftAndPublish": false },
   "attributes": {
-    "status": { "type": "enumeration", "enum": ["pending", "approved", "rejected", "withdrawn"], "required": true, "default": "pending" },
+    "registrationStatus": { "type": "enumeration", "enum": ["pending", "approved", "rejected", "withdrawn"], "required": true, "default": "pending" },
     "submittedAt": { "type": "datetime", "required": true },
     "rejectionReason": { "type": "text" },
     "seed": { "type": "integer", "min": 1 },

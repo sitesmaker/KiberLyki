@@ -25,6 +25,10 @@ export function getTeams() {
   return apiFetch<StrapiListResponse<Team>>(`/api/teams?${query}`);
 }
 
+export function getTeam(documentId: string) {
+  return apiFetch<{ data: Team }>(`/api/teams/${documentId}/details`);
+}
+
 export function createTeam(data: { name: string; description: string; disciplines: string[] }) {
   return apiFetch<{ data: Team }>('/api/teams/mine', {
     method: 'POST',
