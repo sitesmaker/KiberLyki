@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useParams } from 'react-router-dom';
 import { apiFetch, getMediaUrl } from '../api/client';
-import type { ArticleData, StrapiListResponse, StrapiSingleResponse } from '../types/api';
+import type { ArticleData, ApiListResponse, ApiSingleResponse } from '../types/api';
 
 async function getArticle(identifier: string) {
   const query = new URLSearchParams({
@@ -9,9 +9,9 @@ async function getArticle(identifier: string) {
     'populate[0]': 'cover',
     'populate[1]': 'gallery',
   });
-  const bySlug = await apiFetch<StrapiListResponse<ArticleData>>(`/api/articles?${query}`);
+  const bySlug = await apiFetch<ApiListResponse<ArticleData>>(`/api/articles?${query}`);
   if (bySlug.data[0]) return bySlug.data[0];
-  const byId = await apiFetch<StrapiSingleResponse<ArticleData>>(`/api/articles/${identifier}?populate=*`);
+  const byId = await apiFetch<ApiSingleResponse<ArticleData>>(`/api/articles/${identifier}?populate=*`);
   return byId.data;
 }
 

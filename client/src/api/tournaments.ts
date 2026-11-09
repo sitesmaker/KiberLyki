@@ -1,5 +1,5 @@
 import { apiFetch } from './client';
-import type { StrapiListResponse, StrapiSingleResponse } from '../types/api';
+import type { ApiListResponse, ApiSingleResponse } from '../types/api';
 import type { Tournament, TournamentRegistration } from '../types/domain';
 
 export function getTournaments() {
@@ -8,11 +8,11 @@ export function getTournaments() {
     'populate[1]': 'cover',
     'sort[0]': 'startsAt:asc',
   });
-  return apiFetch<StrapiListResponse<Tournament>>(`/api/tournaments?${query}`);
+  return apiFetch<ApiListResponse<Tournament>>(`/api/tournaments?${query}`);
 }
 
 export function getTournament(documentId: string) {
-  return apiFetch<StrapiSingleResponse<Tournament>>(`/api/tournaments/${documentId}/details`);
+  return apiFetch<ApiSingleResponse<Tournament>>(`/api/tournaments/${documentId}/details`);
 }
 
 export function registerTeamForTournament(tournamentId: string, playerIds: number[]) {

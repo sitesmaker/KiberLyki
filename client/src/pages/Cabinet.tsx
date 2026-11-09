@@ -103,7 +103,7 @@ export default function Cabinet() {
   const isCaptain = teamQuery.data?.meta.isCaptain ?? false;
 
   return (
-    <main className="dashboard container">
+    <div className="dashboard container">
       <header className="dashboard__header">
         <div><Link to="/">← На сайт</Link><h1>Личный кабинет</h1><p>{user?.username} · {user?.email}</p></div>
         <div className="dashboard__actions"><Link className="button-link" to="/cabinet/profile">Мой профиль</Link><Button type="button" onClick={logout}>Выйти</Button></div>
@@ -157,7 +157,7 @@ export default function Cabinet() {
                 <label>Username<input name="username" required /></label>
                 <label>Никнейм<input name="nickname" required /></label>
                 <label>Email<input name="email" type="email" required /></label>
-                <label>Временный пароль<input name="password" type="password" minLength={6} required /></label>
+                <label>Временный пароль<input name="password" type="password" minLength={8} required /></label>
                 <label>Позиция<select name="position"><option value="main">Основной</option><option value="substitute">Запасной</option><option value="coach">Тренер</option></select></label>
                 {playerMutation.error && <p className="form-error">{playerMutation.error.message}</p>}
                 <Button type="submit" disabled={playerMutation.isPending}>Создать игрока</Button>
@@ -200,6 +200,6 @@ export default function Cabinet() {
           {!registrationsQuery.isLoading && registrationsQuery.data?.data.length === 0 && <p>Заявок пока нет.</p>}
         </div>
       </section>
-    </main>
+    </div>
   );
 }

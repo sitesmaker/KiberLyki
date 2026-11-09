@@ -2,6 +2,7 @@ import { type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import Button from '../components/Button';
+import ImagePicker from '../components/ImagePicker';
 import { getMediaUrl } from '../api/client';
 import { changePassword } from '../api/auth';
 import { getMyProfile, saveMyProfile } from '../api/profile';
@@ -52,7 +53,7 @@ export default function PlayerProfilePage() {
   if (profileQuery.isLoading) return <div className="page-message">Загрузка профиля...</div>;
 
   return (
-    <main className="dashboard container profile-page">
+    <div className="dashboard container profile-page">
       <header className="dashboard__header">
         <div><Link to="/cabinet">← В кабинет</Link><h1>Профиль игрока</h1><p>Эти данные принадлежат вам, а не капитану команды.</p></div>
       </header>
@@ -61,8 +62,7 @@ export default function PlayerProfilePage() {
         <form className="panel form-grid" onSubmit={submitProfile} key={profile?.updatedAt ?? 'new-profile'}>
           <h2>Игровая информация</h2>
           <div className="profile-avatar form-grid__wide">
-            {profile?.avatar ? <img src={getMediaUrl(profile.avatar.url)} alt={`Аватар ${profile.nickname}`} /> : <div className="team-card__placeholder">{(profile?.nickname || user?.username || '?').slice(0, 2).toUpperCase()}</div>}
-            <label>Новый аватар<input name="avatar" type="file" accept="image/*" /></label>
+            <ImagePicker name="avatar" currentUrl={profile?.avatar ? getMediaUrl(profile.avatar.url) : undefined} />
           </div>
           <label>Никнейм<input name="nickname" defaultValue={profile?.nickname ?? user?.username ?? ''} required /></label>
           <label>Страна<input name="country" defaultValue={profile?.country ?? ''} /></label>
@@ -77,12 +77,12 @@ export default function PlayerProfilePage() {
           <h2>Сменить пароль</h2>
           <p>Если аккаунт создал капитан, после первого входа обязательно замените временный пароль.</p>
           <label className="form-grid__wide">Текущий пароль<input name="currentPassword" type="password" required /></label>
-          <label className="form-grid__wide">Новый пароль<input name="password" type="password" minLength={6} required /></label>
-          <label className="form-grid__wide">Повторите пароль<input name="passwordConfirmation" type="password" minLength={6} required /></label>
+          <label className="form-grid__wide">Новый пароль<input name="password" type="password" minLength={8} required /></label>
+          <label className="form-grid__wide">Повторите пароль<input name="passwordConfirmation" type="password" minLength={8} required /></label>
           {passwordMutation.error && <p className="form-error">{passwordMutation.error.message}</p>}
           <Button type="submit" disabled={passwordMutation.isPending}>Изменить пароль</Button>
         </form>
       </div>
-    </main>
+    </div>
   );
 }

@@ -2,7 +2,7 @@ import "./About.css"
 import Section from '../Section/Section.tsx';
 import { useQuery } from '@tanstack/react-query';
 import { apiFetch, getMediaUrl } from '../../api/client';
-import type { Media, StrapiSingleResponse } from '../../types/api';
+import type { Media, ApiSingleResponse } from '../../types/api';
 
 interface AboutData {
     title?: string;
@@ -18,7 +18,7 @@ export default function About() {
     } = useQuery({
         queryKey: ['about'],
         queryFn: async () => {
-            const json = await apiFetch<StrapiSingleResponse<AboutData>>('/api/about?populate=image');
+            const json = await apiFetch<ApiSingleResponse<AboutData>>('/api/about?populate=image');
             return json.data;
         }
     });

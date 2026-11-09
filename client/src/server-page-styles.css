@@ -1,0 +1,14 @@
+/* Render-blocking styles for Laravel HTML in Vite development mode. */
+@import "./index.css";
+@import "./layouts/PublicLayout/PublicLayotStyles.css";
+@import "./components/Header/Header.css";
+@import "./components/Footer/Footer.css";
+@import "./components/FullScreen/FullScreen.css";
+@import "./pages/Home.css";
+@import "./components/Employee/Employee.css";
+@import "./components/Staff/Staff.css";
+@import "./components/Bracket/Bracket.css";
+@import "./components/Article/Article.css";
+@import "./components/ArticlesList/ArticlesList.css";
+@import "./components/Toast/Toast.css";
+@import "./public-pages.css";

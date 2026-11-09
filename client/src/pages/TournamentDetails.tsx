@@ -10,8 +10,9 @@ import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import OrganizerPanel from '../components/OrganizerPanel/OrganizerPanel';
 
-export default function TournamentDetails() {
-  const { documentId = '' } = useParams();
+export default function TournamentDetails({ initialDocumentId, interactiveOnly = false }: { initialDocumentId?: string; interactiveOnly?: boolean } = {}) {
+  const { documentId: routeDocumentId = '' } = useParams();
+  const documentId = initialDocumentId ?? routeDocumentId;
   const { user } = useAuth();
   const { showToast } = useToast();
   const queryClient = useQueryClient();
@@ -33,13 +34,13 @@ export default function TournamentDetails() {
   const finalMatch = tournament.matches?.find((match) => match.round === Math.max(0, ...(tournament.matches?.map((item) => item.round) ?? [])));
 
   return (
-    <main>
-      <section className="tournament-hero" style={tournament.cover ? { backgroundImage: `linear-gradient(#08111dcc, #08111df2), url(${getMediaUrl(tournament.cover.url)})` } : undefined}>
+    <div>
+      {!interactiveOnly && <section className="tournament-hero" style={tournament.cover ? { backgroundImage: `linear-gradient(#08111dcc, #08111df2), url(${getMediaUrl(tournament.cover.url)})` } : undefined}>
         <div className="container"><Link to="/tournaments">← Все турниры</Link><span className="tag">{tournament.discipline?.name}</span><h1>{tournament.title}</h1><p>{tournament.description}</p><div className="facts"><span>Старт: {new Date(tournament.startsAt).toLocaleString('ru-RU')}</span><span>Команда: {tournament.teamSize} игроков</span><span>Лимит: {tournament.maxTeams} команд</span></div></div>
-      </section>
+      </section>}
 
       <div className="container tournament-layout">
-        {user?.role?.type === 'organizer' && <div className="tournament-layout__wide"><OrganizerPanel tournament={tournament} /></div>}
+        {['admin', 'manager', 'organizer'].includes(user?.role?.type ?? '') && <div className="tournament-layout__wide"><OrganizerPanel tournament={tournament} /></div>}
         <section className="panel"><div className="bracket-heading"><div><h2>Турнирная сетка</h2><p>Победитель каждого матча проходит в следующий раунд. Проигравшая команда выбывает.</p></div>{finalMatch?.winner && <div className="champion"><small>Победитель турнира</small><Link to={`/teams/${finalMatch.winner.documentId}`}>🏆 {finalMatch.winner.name}</Link></div>}</div><Bracket matches={tournament.matches ?? []} /></section>
         <aside className="panel registration-panel">
           <h2>Заявка команды</h2>
@@ -60,6 +61,6 @@ export default function TournamentDetails() {
         <section className="panel tournament-teams"><h2>Команды турнира</h2>{approvedTeams.length ? <ol>{approvedTeams.map((registration) => <li key={registration.documentId}><Link to={`/teams/${registration.team.documentId}`}>{registration.team.name}</Link>{registration.seed && <small>Посев №{registration.seed}</small>}</li>)}</ol> : <p>Одобренных команд пока нет.</p>}</section>
         {tournament.rules && <section className="panel rules"><h2>Правила</h2><div className="rich-text">{tournament.rules}</div></section>}
       </div>
-    </main>
+    </div>
   );
 }

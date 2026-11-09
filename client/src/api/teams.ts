@@ -1,6 +1,6 @@
 import { apiFetch } from './client';
 import type { Discipline, Team } from '../types/domain';
-import type { StrapiListResponse } from '../types/api';
+import type { ApiListResponse } from '../types/api';
 
 export interface MyTeamResponse {
   data: Team | null;
@@ -8,7 +8,7 @@ export interface MyTeamResponse {
 }
 
 export function getDisciplines() {
-  return apiFetch<StrapiListResponse<Discipline>>('/api/disciplines?sort=name:asc');
+  return apiFetch<ApiListResponse<Discipline>>('/api/disciplines?sort=name:asc');
 }
 
 export function getMyTeam() {
@@ -22,7 +22,7 @@ export function getTeams() {
     'sort[0]': 'name:asc',
     'filters[isActive][$eq]': 'true',
   });
-  return apiFetch<StrapiListResponse<Team>>(`/api/teams?${query}`);
+  return apiFetch<ApiListResponse<Team>>(`/api/teams?${query}`);
 }
 
 export function getTeam(documentId: string) {

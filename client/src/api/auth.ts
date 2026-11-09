@@ -24,6 +24,10 @@ export function getCurrentUser() {
   return apiFetch<User>('/api/users/me?populate=role');
 }
 
+export function logoutRequest() {
+  return apiFetch('/api/auth/logout', { method: 'POST' });
+}
+
 export function changePassword(currentPassword: string, password: string, passwordConfirmation: string) {
   return apiFetch('/api/auth/change-password', {
     method: 'POST',

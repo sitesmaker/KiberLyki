@@ -35,6 +35,8 @@ const Toast = ({ message, type = 'success', duration = 3000, onClose }: ToastPro
       <div className="toast-message">{message}</div>
       <button 
         className="toast-close" 
+        type="button"
+        aria-label="Закрыть уведомление"
         onClick={() => {
           setIsVisible(false);
           setTimeout(onClose, 300);

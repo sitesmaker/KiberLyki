@@ -4,11 +4,11 @@ import "./ArticlesList.css";
 import Article from '../Article/Article.tsx';
 import Section from '../Section/Section.tsx';
 import { apiFetch } from '../../api/client';
-import type { ArticleData, StrapiListResponse } from '../../types/api';
+import type { ArticleData, ApiListResponse } from '../../types/api';
 
 interface ArticlePage {
   data: ArticleData[];
-  meta: StrapiListResponse<ArticleData>['meta'];
+  meta: ApiListResponse<ArticleData>['meta'];
   nextPage?: number;
 }
 
@@ -34,7 +34,7 @@ export default function ArticlesList() {
           'populate': 'cover',
           'sort[0]': 'createdAt:desc',
         });
-      const json = await apiFetch<StrapiListResponse<ArticleData>>(`/api/articles?${query}`);
+      const json = await apiFetch<ApiListResponse<ArticleData>>(`/api/articles?${query}`);
       return {
         data: json.data,
         meta: json.meta,

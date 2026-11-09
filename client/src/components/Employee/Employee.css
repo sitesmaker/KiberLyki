@@ -1,0 +1,10 @@
+.employee { min-width: 0; display: flex; flex-direction: column; color: var(--color-text); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); overflow: hidden; transition: border-color .2s; }
+.employee:hover { border-color: var(--color-accent); color: var(--color-text); }
+.employee__portrait { position: relative; aspect-ratio: 1.15; display: grid; place-items: center; background: radial-gradient(ellipse at 25% 30%, #245747, transparent 75%), var(--color-raised); overflow: hidden; }
+.employee__portrait img { width: 100%; height: 100%; object-fit: cover; }
+.employee__portrait > span:not(.employee__role) { font-size: 80px; font-weight: 800; color: #9bf7d040; letter-spacing: -.08em; }
+.employee__role { position: absolute; bottom: 18px; left: 18px; right: 18px; width: fit-content; max-width: calc(100% - 36px); padding: 6px 12px; border-radius: 5px; color: var(--color-accent); background: #0b111be8; font-size: 11px; overflow-wrap: anywhere; }
+.employee__body { padding: 24px; min-width: 0; overflow-wrap: anywhere; display: flex; flex-direction: column; flex: 1; }
+.employee h3 { font-weight: 800; font-size: 23px; letter-spacing: -.04em; margin: 0 0 12px; }
+.employee__body p { color: var(--color-muted); font-size: 13px; line-height: 1.8; margin: 0 0 22px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.employee__more { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--color-accent); font-size: 11px; margin-top: auto; }

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import type { User } from '../types/domain';
-import { getCurrentUser, loginRequest, registerRequest } from '../api/auth';
+import { getCurrentUser, loginRequest, registerRequest, logoutRequest } from '../api/auth';
 import { AuthContext } from './auth-context';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   function logout() {
+    void logoutRequest().catch(() => undefined);
     localStorage.removeItem('auth_token');
     setUser(null);
   }

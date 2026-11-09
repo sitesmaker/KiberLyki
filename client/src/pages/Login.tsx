@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { useAuth } from '../context/useAuth';
 
@@ -33,21 +33,21 @@ export default function Login() {
   }
 
   return (
-    <main className="auth-page">
-      <Link to="/" className="auth-page__logo">Cyberluki</Link>
+    <div className="auth-page">
+
       <form className="panel auth-form" onSubmit={handleSubmit}>
         <h1>{mode === 'login' ? 'Вход' : 'Регистрация капитана'}</h1>
         {mode === 'register' && (
           <label>Username<input value={username} onChange={(event) => setUsername(event.target.value)} required /></label>
         )}
         <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
-        <label>Пароль<input type="password" minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} required /></label>
+        <label>Пароль<input type="password" minLength={mode === 'register' ? 8 : undefined} value={password} onChange={(event) => setPassword(event.target.value)} required /></label>
         {error && <p className="form-error">{error}</p>}
         <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Подождите...' : mode === 'login' ? 'Войти' : 'Зарегистрироваться'}</Button>
         <button type="button" className="text-button" onClick={() => setMode(mode === 'login' ? 'register' : 'login')}>
           {mode === 'login' ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти'}
         </button>
       </form>
-    </main>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:1337';
+const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 export class ApiError extends Error {
   readonly status: number;
@@ -23,6 +23,7 @@ export function getMediaUrl(path?: string | null) {
 
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
+  headers.set('Accept', 'application/json');
   const token = localStorage.getItem('auth_token');
 
   if (token) headers.set('Authorization', `Bearer ${token}`);

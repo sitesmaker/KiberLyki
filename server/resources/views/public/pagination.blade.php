@@ -1,0 +1,3 @@
+@if($paginator->hasPages())<nav class="server-pagination" aria-label="Страницы новостей">@if(!$paginator->onFirstPage())<a href="{{ $paginator->previousPageUrl() }}" aria-label="Предыдущая страница">←</a>@endif
+@for($number = max(1, $paginator->currentPage() - 2); $number <= min($paginator->lastPage(), $paginator->currentPage() + 2); $number++)<a href="{{ $paginator->url($number) }}" @if($number === $paginator->currentPage()) aria-current="page" @endif>{{ $number }}</a>@endfor
+@if($paginator->hasMorePages())<a href="{{ $paginator->nextPageUrl() }}" aria-label="Следующая страница">→</a>@endif</nav>@endif

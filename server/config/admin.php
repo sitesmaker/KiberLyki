@@ -1,0 +1,18 @@
+<?php
+
+$sections = [
+    'disciplines' => ['title' => 'Дисциплины', 'fields' => ['name' => ['Название', 'text', 'required|string|max:150'], 'slug' => ['Адрес (латиницей)', 'text', 'required|alpha_dash|max:150'], 'teamSize' => ['Игроков в составе', 'number', 'required|integer|min:1|max:32']]],
+    'tournaments' => ['title' => 'Турниры', 'fields' => [
+        'title' => ['Название', 'text', 'required|string|max:150'], 'slug' => ['Адрес (латиницей)', 'text', 'required|alpha_dash|max:150'],
+        'description' => ['Описание', 'textarea', 'nullable|string|max:20000'], 'rules' => ['Правила', 'textarea', 'nullable|string|max:20000'],
+        'discipline_id' => ['Дисциплина', 'discipline', 'required|exists:disciplines,id'], 'teamSize' => ['Игроков в заявке', 'number', 'required|integer|min:1|max:32'], 'maxTeams' => ['Максимум команд', 'number', 'required|integer|min:2|max:256'],
+        'registrationStartsAt' => ['Начало регистрации', 'datetime-local', 'required|date'], 'registrationEndsAt' => ['Конец регистрации', 'datetime-local', 'required|date|after:registrationStartsAt'], 'startsAt' => ['Начало турнира', 'datetime-local', 'required|date|after_or_equal:registrationEndsAt'],
+        'phase' => ['Этап турнира', 'phase', 'required|in:draft,registration,check_in,active,finished,cancelled'], 'cover' => ['Обложка', 'image', 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120']]],
+    'articles' => ['title' => 'Новости', 'fields' => ['title' => ['Заголовок', 'text', 'required|string|max:200'], 'slug' => ['Адрес (латиницей)', 'text', 'required|alpha_dash|max:200'], 'description' => ['Краткое описание', 'textarea', 'nullable|string|max:5000'], 'content' => ['Текст новости', 'textarea', 'nullable|string|max:100000'], 'author' => ['Автор', 'text', 'nullable|string|max:150'], 'cover' => ['Обложка', 'image', 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120'], 'gallery' => ['Галерея (несколько файлов)', 'gallery', 'nullable|array']]],
+    'first-screen' => ['title' => 'Первый экран', 'single' => true, 'fields' => ['title' => ['Заголовок', 'text', 'required|string|max:200'], 'content' => ['Текст', 'textarea', 'nullable|string|max:5000'], 'media' => ['Фоновое видео или изображение', 'media', 'nullable|file|mimes:mp4,webm,jpg,jpeg,png,webp|max:102400']]],
+    'about' => ['title' => 'О клубе', 'single' => true, 'fields' => ['title' => ['Заголовок', 'text', 'required|string|max:200'], 'description' => ['Описание', 'textarea', 'nullable|string|max:20000'], 'image' => ['Изображение', 'image', 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120']]],
+    'staffs' => ['title' => 'Команда клуба', 'fields' => ['firstName' => ['Имя', 'text', 'required|string|max:100'], 'lastName' => ['Фамилия', 'text', 'required|string|max:100'], 'specialization' => ['Роль в клубе', 'staff-role', 'required|string|max:150'], 'intro' => ['Коротко о человеке (для карточки)', 'textarea', 'nullable|string|max:300'], 'description' => ['История и вклад в клуб', 'textarea', 'nullable|string|max:10000'], 'sortOrder' => ['Порядок показа (0 — первый)', 'sort-order', 'nullable|integer|min:0|max:9999'], 'photo' => ['Портрет', 'image', 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120']]],
+    'setting' => ['title' => 'Контакты', 'single' => true, 'fields' => ['title' => ['Название', 'text', 'required|string|max:200'], 'description' => ['Описание', 'textarea', 'nullable|string|max:5000'], 'email' => ['Email', 'email', 'nullable|email'], 'phone' => ['Телефон', 'text', 'nullable|string|max:50'], 'address' => ['Адрес', 'text', 'nullable|string|max:500'], 'workTime' => ['Часы работы', 'textarea', 'nullable|string|max:1000']]],
+];
+
+return $sections;

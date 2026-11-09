@@ -1,46 +1,19 @@
 import { Link } from 'react-router-dom';
-import { FaVk } from "react-icons/fa";
-import { FaTelegramPlane } from "react-icons/fa";
-import './Footer.css'
+import { FaVk } from 'react-icons/fa';
+import { FiArrowUpRight } from 'react-icons/fi';
+import { club } from '../../config/club';
+import './Footer.css';
 
 export default function Footer() {
-
-    return(
-        <footer className="footer">
-            <div className="container footer__grid">
-                <div className="footer__item">
-                    <Link to="/" className="logo-main">
-                        <span>Cyber</span>luki
-                    </Link>
-                </div>
-                <div className="footer__item">
-                    <div className="footer__item-title">Навигация</div>
-                    <nav>
-                        <Link to="/">Главная</Link>
-                        <Link to="/articles">Новости</Link>
-                        <Link to="/teams">Команды</Link>
-                        <Link to="/tournaments">Турниры</Link>
-                        <Link to="/cabinet">Кабинет</Link>
-                    </nav>
-                </div>
-                <div className="footer__item">
-                    <div className="footer__item-title">Контакты</div>
-                    <div className="footer__item-subtitle">Наш адрес</div>
-                    <p>г. Великие луки</p>
-                    <div className="footer__item-subtitle">Режим работы</div>
-                    <p>Пн-Пт 09:00 - 18:00</p>
-                    <p>Сб-Вс Выходной</p>
-                </div>
-                <div className="footer__item">
-                    <a href="mailto:mailtest@mail.ru">mailtest@mail.ru</a>
-                    <a href="tel:+79999999999">+79999999999</a>
-                    <div className="footer__item-subtitle">Мы в соц. сетях</div>
-                    <div className='social'>
-                        <a href="" className='link--social'><FaVk /></a>
-                        <a href="" className='link--social'><FaTelegramPlane /></a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    )
+  return (
+    <footer className="footer">
+      <div className="container footer__grid">
+        <div className="footer__item"><Link reloadDocument to="/" className="logo-main"><span>Cyber</span>luki</Link><p className="footer__description">Киберспортивное сообщество<br />{club.city}</p></div>
+        <div className="footer__item"><div className="footer__item-title">На платформе</div><nav aria-label="Навигация в футере"><Link reloadDocument to="/">Главная</Link><Link reloadDocument to="/articles">Новости</Link><Link reloadDocument to="/teams">Команды</Link><Link reloadDocument to="/tournaments">Турниры</Link><Link reloadDocument to="/cabinet">Кабинет</Link></nav></div>
+        <div className="footer__item"><div className="footer__item-title">Будь на связи</div><a href={club.communityUrl} target="_blank" rel="noopener noreferrer">Сообщество ВКонтакте ↗</a><a href={club.founderUrl} target="_blank" rel="noopener noreferrer">Связаться с создателем ↗</a></div>
+        <div className="footer__item"><div className="footer__item-title">Твоя игра начинается здесь</div><p>Собери команду.<br />Выбери турнир.<br />Покажи свой уровень.</p><a href={club.communityUrl} target="_blank" rel="noopener noreferrer" className="footer__community" aria-label="Открыть сообщество КиберЛуки ВКонтакте"><FaVk /><FiArrowUpRight /></a></div>
+      </div>
+      <div className="container footer__bottom"><span>КиберЛуки · {club.city}</span><span>С уважением к игре и друг к другу.</span></div>
+    </footer>
+  );
 }

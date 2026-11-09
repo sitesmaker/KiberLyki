@@ -6,7 +6,7 @@ export interface Media {
   mime?: string;
 }
 
-export interface StrapiListResponse<T> {
+export interface ApiListResponse<T> {
   data: T[];
   meta: {
     pagination: {
@@ -18,7 +18,7 @@ export interface StrapiListResponse<T> {
   };
 }
 
-export interface StrapiSingleResponse<T> {
+export interface ApiSingleResponse<T> {
   data: T;
   meta?: Record<string, unknown>;
 }
@@ -44,5 +44,7 @@ export interface StaffData {
   lastName: string;
   specialization?: string;
   description?: string;
+  intro?: string;
+  sortOrder?: number;
   photo?: Media | null;
 }

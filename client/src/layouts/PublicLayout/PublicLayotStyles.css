@@ -1,3 +1,9 @@
 .public-layout {
-    
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
 }
+
+.public-layout > main { flex: 1; min-width: 0; padding-top: var(--site-header-height); }
+.public-layout--hero > main { padding-top: 0; }
+:root { --site-header-height: 5rem; }

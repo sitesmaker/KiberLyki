@@ -14,6 +14,7 @@ import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import { AuthProvider } from './context/AuthProvider.tsx';
 import PlayerProfilePage from './pages/PlayerProfile.tsx';
 import TeamDetails from './pages/TeamDetails.tsx';
+import ClubPerson from './pages/ClubPerson.tsx';
 
 export default function App() {
   return (
@@ -24,19 +25,19 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/teams/:documentId" element={<TeamDetails />} />
+          <Route path="/club/:documentId" element={<ClubPerson />} />
           <Route path="/articles" element={<Articles />} />
           <Route path="/articles/:identifier" element={<ArticleDetails />} />
           <Route path="/tournaments" element={<Tournaments />} />
           <Route path="/tournaments/:documentId" element={<TournamentDetails />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/cabinet" element={<Cabinet />} />
+            <Route path="/cabinet/profile" element={<PlayerProfilePage />} />
+            <Route path="/admin" element={<AdminLayout />} />
+          </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<div className="page-message"><h1>Страница не найдена</h1><a href="/">Вернуться на главную</a></div>} />
         </Route>
-
-        <Route element={<ProtectedRoute />}>
-          <Route path="/cabinet" element={<Cabinet />} />
-          <Route path="/cabinet/profile" element={<PlayerProfilePage />} />
-          <Route path="/admin" element={<AdminLayout />} />
-        </Route>
-        
-        <Route path="/login" element={<Login />} />
       </Routes>
       </ToastProvider>
     </AuthProvider>

@@ -1,4 +1,4 @@
-@import "./styles/fonts";
+@import "../../server/public/club-theme.css";
 @import "./styles/vars";
 @import "./styles/general";
 @import "tailwindcss";

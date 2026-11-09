@@ -1,5 +1,8 @@
 .articles-list {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 15px;
 }
+
+@media (max-width: 1000px) { .articles-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .articles-list { grid-template-columns: 1fr; } }

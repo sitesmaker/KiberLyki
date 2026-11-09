@@ -1,0 +1,7 @@
+@extends('admin.layout')
+@section('title', 'Команды и составы')
+@section('content')
+@include('admin.search')
+<section class="card"><h2>Все команды</h2><table><thead><tr><th>Команда</th><th>Капитан</th><th>Дисциплины</th><th></th></tr></thead><tbody>@forelse($teams as $team)<tr><td>{{ $team->name }}</td><td>{{ $team->captain->username }}</td><td>{{ $team->discipline->pluck('name')->join(', ') }}</td><td><a href="/admin/teams/{{ $team->documentId }}">Управлять составом →</a></td></tr>@empty<tr><td colspan="4">Команды не найдены. Измените поиск или создайте команду ниже.</td></tr>@endforelse</tbody></table>{{ $teams->links('admin.pagination') }}</section>
+<section class="card"><h2>Новая команда</h2><p>Капитан должен иметь аккаунт на сайте. Он автоматически попадёт в основной состав.</p><form method="post" action="/admin/teams">@csrf<label>Название<input name="data[name]" required maxlength="150"></label><label>Описание<textarea name="data[description]"></textarea></label><label>Капитан<select name="captain_id" required><option value="">Выберите пользователя</option>@foreach($users as $u)<option value="{{ $u->id }}">{{ $u->username }}</option>@endforeach</select></label><fieldset><legend>Дисциплины</legend>@forelse($disciplines as $d)<label class="check"><input type="checkbox" name="data[disciplines][]" value="{{ $d->documentId }}">{{ $d->name }}</label>@empty<p><a href="/admin/content/disciplines/new">Сначала добавьте дисциплину</a></p>@endforelse</fieldset><button>Создать команду</button></form></section>
+@endsection

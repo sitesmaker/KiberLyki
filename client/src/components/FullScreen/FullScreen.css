@@ -1,56 +1,32 @@
-.fullscreen {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.fullscreen__content {
-    position: relative;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.fullscreen h1 {
-    text-align: center;
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 3rem;
-    color: var(--white);
-    text-shadow: 0 0 10px #000;
-}
-
-.fullscreen .fullscreen__media {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 1;
-}
-
-.fullscreen .fullscreen__media video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 1;
-}
-
-.fullscreen .fullscreen__media::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(81, 162, 255, .2);
-    z-index: 2;
+.fullscreen { position: relative; isolation: isolate; min-height: min(930px, 100svh); display: flex; background: #080e17; overflow: hidden; color: #fff; }
+.fullscreen__media, .fullscreen__grid { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.fullscreen__media video, .fullscreen__media img { width: 100%; height: 100%; object-fit: cover; opacity: .7; }
+.fullscreen__media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #060c18e8 0%, #060c188a 58%, #060c1829), linear-gradient(0deg, #080e17 0%, transparent 40%); }
+.fullscreen__grid { background-image: linear-gradient(#ffffff06 1px, transparent 1px), linear-gradient(90deg, #ffffff06 1px, transparent 1px); background-size: 96px 96px; opacity: .65; }
+.fullscreen__body { display: flex; flex-direction: column; padding-top: calc(46px + var(--site-header-height)); padding-bottom: 28px; }
+.fullscreen__eyebrow { display: flex; align-items: center; gap: 12px; color: #c6d5e4; font-size: 11px; letter-spacing: .14em; font-weight: 750; text-transform: uppercase; }
+.fullscreen__dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #9bf7d0; box-shadow: 0 0 16px #9bf7d066; }
+.fullscreen__divider { color: #617082; margin: 0 4px; }
+.fullscreen__content { padding: 65px 0 60px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+.fullscreen .fullscreen__content h1 { font-family: 'Manrope', Arial, sans-serif; font-size: clamp(2.6rem, 6.7vw, 6.3rem); font-weight: 850; line-height: 1.08; letter-spacing: -.055em; margin: 0; text-align: left; max-width: 1100px; overflow-wrap: anywhere; text-transform: uppercase; text-shadow: 0 2px 25px #0003; }
+.fullscreen h1 span { display: block; }
+.fullscreen h1 .fullscreen__accent { color: #9bf7d0; }
+.fullscreen .fullscreen__content p { color: #bec8d5; font-size: 17px; line-height: 1.8; max-width: 510px; margin: 28px 0 32px; text-align: left; }
+.fullscreen__actions { display: flex; flex-wrap: wrap; gap: 14px; }
+.fullscreen__bottom { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 22px; border-top: 1px solid #ffffff20; }
+.fullscreen__scroll { display: flex; align-items: center; gap: 12px; color: #d4dce6; font-size: 12px; font-weight: 500; }
+.fullscreen__scroll svg { height: 32px; width: 32px; padding: 8px; border: 1px solid #ffffff30; border-radius: 50%; }
+.fullscreen__bottom-right { display: flex; align-items: center; gap: 22px; font-size: 10px; letter-spacing: .18em; color: #8997a9; }
+@media (min-width: 1600px) { .fullscreen { min-height: 930px; } }
+@media (max-width: 640px) {
+  .fullscreen { min-height: 100svh; }
+  .fullscreen__body { padding-top: calc(28px + var(--site-header-height)); padding-bottom: 22px; }
+  .fullscreen__eyebrow { font-size: 9px; gap: 8px; letter-spacing: .09em; }
+  .fullscreen__content { padding: 50px 0 45px; }
+  .fullscreen .fullscreen__content h1 { font-size: clamp(2.3rem, 10.8vw, 4.2rem); letter-spacing: -.055em; }
+  .fullscreen .fullscreen__content p { font-size: 14px; margin: 22px 0 26px; }
+  .fullscreen__actions { width: 100%; gap: 10px; }
+  .fullscreen__actions .home-button { flex: 1 1 100%; }
+  .fullscreen__bottom-right > span { display: none; }
+  .fullscreen__scroll { font-size: 11px; }
 }

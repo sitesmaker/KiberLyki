@@ -24,7 +24,7 @@ export async function saveMyProfile(form: FormData) {
     lastName: String(form.get('lastName') ?? ''),
     country: String(form.get('country') ?? ''),
     bio: String(form.get('bio') ?? ''),
-    ...(avatarId ? { avatar: avatarId } : {}),
+    ...(avatarId ? { avatar: avatarId } : form.get('removeAvatar') === '1' ? { avatar: null } : {}),
   };
 
   return apiFetch<{ data: PlayerProfile }>('/api/player-profile/me', {

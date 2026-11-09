@@ -1,9 +1,9 @@
 .article {
-    /* background: var(--white); */
-    box-shadow: 0 0 7px #333;
-    color: var(--black);
-    width: calc(100% / 3);
-    border-radius: 15px;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    color: var(--color-text);
+    width: 100%;
+    min-width: 0;
+    border-radius: var(--radius-card);
     overflow: hidden;
 }
 
@@ -16,6 +16,7 @@
 }
 
 .article__title {
+    overflow-wrap: anywhere;
     font-size: 1.25rem;
     margin-bottom: .5rem;
 }

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import Section from '../Section/Section.tsx';
-import Employee from "../Employee/Employee.tsx";
+import StaffCarousel from './StaffCarousel';
 import { apiFetch } from '../../api/client';
-import type { StaffData, StrapiListResponse } from '../../types/api';
+import type { StaffData, ApiListResponse } from '../../types/api';
+import './Staff.css';
 
 export default function Staff() {
     const {
@@ -12,24 +12,17 @@ export default function Staff() {
     } = useQuery({
         queryKey: ['staff'],
         queryFn: async () => {
-            const json = await apiFetch<StrapiListResponse<StaffData>>('/api/staffs?populate=photo');
+            const json = await apiFetch<ApiListResponse<StaffData>>('/api/staffs?pagination[pageSize]=100');
             return json.data; // Это массив сотрудников
         }
     });
 
-    if (isLoading) return <div>Загрузка...</div>;
-    if (error) return <div>Ошибка: {error.message}</div>;
+    if (isLoading || error) return null;
     
     // Проверка, что data - это массив
     if (!data || !Array.isArray(data) || data.length === 0) {
-        return <div>Сотрудники не найдены</div>;
+        return null;
     }
 
-    return (
-        <Section className="staff">
-            {data.map((item) => (
-                <Employee data={item} key={item.id} />
-            ))}
-        </Section>
-    );
+    return <StaffCarousel people={data} />;
 }
